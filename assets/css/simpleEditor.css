@@ -1,0 +1,58 @@
+/* line 1, ../scss/simpleEditor.scss */
+.leftSearchResult {
+  padding: 4px;
+}
+
+/* line 5, ../scss/simpleEditor.scss */
+#inspectorMedia div #inspectorInfoRepScrollingViewerContainer {
+  position: relative;
+  overflow: hidden;
+  width: 170px;
+  height: 170px;
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+/* line 14, ../scss/simpleEditor.scss */
+.simple_editor_img_primary {
+  width: 100%;
+  text-align: center;
+}
+
+/* line 19, ../scss/simpleEditor.scss */
+.simple_editor_imgs img {
+  max-height: 50px;
+  margin: 4px;
+}
+
+/* line 25, ../scss/simpleEditor.scss */
+#mainContent .watchThis, #mainContent #caDuplicateItemButton {
+  line-height: 30px;
+  margin-right: 4px;
+  padding: 4px;
+  float: left;
+  font-family: 'DIN-Regular';
+  font-weight: bold;
+}
+/* line 33, ../scss/simpleEditor.scss */
+#mainContent .watchThis A, #mainContent .watchThis A:hover, #mainContent #caDuplicateItemButton A, #mainContent #caDuplicateItemButton A:hover {
+  color: inherit;
+  text-decoration: inherit;
+}
+/* line 37, ../scss/simpleEditor.scss */
+#mainContent .watchThis IMG, #mainContent #caDuplicateItemButton IMG {
+  vertical-align: middle;
+  padding-right: 2px;
+}
+/* line 42, ../scss/simpleEditor.scss */
+#mainContent #simple_editor_top {
+  clear: both;
+}
+/* line 45, ../scss/simpleEditor.scss */
+#mainContent .sectionBox {
+  position: fixed;
+  overflow-y: scroll;
+  width: 990px;
+  height: 400px;
+  padding-right: 10px;
+}

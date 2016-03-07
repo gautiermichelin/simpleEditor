@@ -1,0 +1,52 @@
+.leftSearchResult{
+  padding:4px;
+}
+
+#inspectorMedia div #inspectorInfoRepScrollingViewerContainer {
+  position: relative;
+  overflow: hidden;
+  width: 170px;
+  height: 170px;
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+.simple_editor_img_primary {
+  width: 100%;
+  text-align: center;
+}
+
+.simple_editor_imgs img {
+  max-height: 50px;
+  margin:4px;
+}
+
+#mainContent {
+  .watchThis, #caDuplicateItemButton {
+    line-height: 30px;
+    margin-right:4px;
+    padding:4px;
+    float:left;
+    font-family: 'DIN-Regular';
+    font-weight: bold;
+
+    A, A:hover {
+      color:inherit;
+      text-decoration: inherit;
+    }
+    IMG {
+      vertical-align: middle;
+      padding-right:2px;
+    }
+  }
+  #simple_editor_top {
+    clear:both;
+  }
+  .sectionBox {
+    position:fixed;
+    overflow-y:scroll;
+    width:990px;
+    height:400px;
+    padding-right:10px;
+  }
+}

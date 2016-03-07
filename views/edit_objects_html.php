@@ -8,6 +8,7 @@
         //die();
     }
 
+    $va_screens = $this->getVar("screens");
 
 ?>
 <div id="topNavSecondLine"><div id="toolIcons">
@@ -49,13 +50,20 @@
     <H1>Objet <?php print $vn_object_id; ?></H1>
     <div style="border:1px solid blue;clear:both;">
         <div style="width:33%;border:1px solid green;float:right;">
-            <?php print caSimpleEditorInspector($this); ?>
         </div>
         <div style="width:65%;border:1px solid red;">
             form-top
         </div>
     </div>
 </div>
-<div style="border:1px solid blue;clear:both;">Menu avec liste des écrans</div>
-<div style="border:1px solid blue;">Partie basse</div>
+<div id="screensList">
+<?php
+    foreach($va_screens as $va_screen) {
+        print "<div>";
+        print caNavLink($this->request, $va_screen["displayName"], "screen_button", "*", "*", "edit".$va_screen["default"]["action"],array("object_id"=>$vn_object_id) );
+        print "</div>";
+    }
+?>
+</div>
+<div></div>
 

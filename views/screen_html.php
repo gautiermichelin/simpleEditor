@@ -39,14 +39,14 @@
 	$vn_rel_id			= $this->getVar('rel_id');
 
 
-    //var_dump($this->getVar("t_item"));
-    if ($this->getVar("t_item")) {
-		//
-		//die();
-	}
+	$vs_last_selected_path_item = $this->getVar('last_selected_path_item');
+	$vs_default_screen 	= $this->getVar('default_screen');
+	$va_screens = $this->getVar("screens");
 
+	print caFormTag($this->request, 'Save/'.$this->request->getActionExtra().'/object_id/'.$vn_object_id, 'ObjectEditorForm', null, 'POST', 'multipart/form-data');
 
 ?>
+
 	<div id="topNavSecondLine"><div id="toolIcons">
 			<script type="text/javascript">
 				function caToggleItemWatch() {
@@ -83,56 +83,76 @@
 		</div>
 	</div>
 	<div id="simple_editor_top">
-		<H1>Objet <?php print $vn_object_id; ?></H1>
-		<div style="border:1px solid blue;clear:both;">
-			<div style="width:33%;border:1px solid green;float:right;">
-				<?php //print caSimpleEditorInspector($this); ?>
+		<div id="top_box">
+			<div id="medias_box">
+				<?php print caSimpleEditorInspector($this); ?>
 			</div>
-			<div style="width:65%;border:1px solid red;">
-				form-top
+			<div id="top_editor_box">
+				<?php
+				$va_form_elements = $t_object->getBundleFormHTMLForScreen($vs_default_screen, array(
+					'request' => $this->request,
+					'formName' => 'ObjectEditorForm',
+					'forceHidden' => array('lot_id')
+				), $va_bundle_list);
+
+				print join("\n", $va_form_elements);
+
+				?>
 			</div>
 		</div>
 	</div>
-	<div style="border:1px solid blue;clear:both;">Menu avec liste des écrans</div>
-	<div style="border:1px solid blue;">
+	<div id="screensList">
+<?php
+
+	foreach($va_screens as $va_screen) {
+		// We display only the non-default screens, as the default one is on top left of the screen
+		if (($va_screen["default"]["action"] == $vs_last_selected_path_item) || ($va_screen["default"]["action"] == "Edit/".$vs_last_selected_path_item )){
+			// Current loaded screen
+			$vs_class="screen_button current";
+		} else {
+			$vs_class="screen_button";
+		}
+		print caNavLink($this->request, $va_screen["displayName"], $vs_class, "*", "*", $va_screen["default"]["action"],array("object_id"=>$vn_object_id) );
+	}
+?>
+	</div>
+	<div id="lower_form">
 <?php
 	if ($vb_can_edit) {
 		$va_cancel_parameters = ($vn_object_id ? array('object_id' => $vn_object_id) : array('type_id' => $t_object->getTypeID()));
 	}
 ?>
-	<div class="sectionBox">
-<?php
+		<div class="sectionBox">
+	<?php
 
-			print caFormTag($this->request, 'Save/'.$this->request->getActionExtra().'/object_id/'.$vn_object_id, 'ObjectEditorForm', null, 'POST', 'multipart/form-data');
+				$va_bundle_list = array();
+				$va_form_elements = $t_object->getBundleFormHTMLForScreen(str_replace("Edit/","",$vs_last_selected_path_item), array(
+										'request' => $this->request,
+										'formName' => 'ObjectEditorForm',
+										'forceHidden' => array('lot_id')
+									), $va_bundle_list);
 
-			$va_bundle_list = array();
-			$va_form_elements = $t_object->getBundleFormHTMLForScreen($this->request->getActionExtra(), array(
-									'request' => $this->request, 
-									'formName' => 'ObjectEditorForm',
-									'forceHidden' => array('lot_id')
-								), $va_bundle_list);
-			
-			print join("\n", $va_form_elements);
-			
-			if ($vb_can_edit) { print $vs_control_box; }
-?>
-			<input type='hidden' name='object_id' value='<?php print $vn_object_id; ?>'/>
-			<input type='hidden' name='collection_id' value='<?php print $this->request->getParameter('collection_id', pInteger); ?>'/>
-			<input type='hidden' name='above_id' value='<?php print $vn_above_id; ?>'/>
-			<input id='isSaveAndReturn' type='hidden' name='is_save_and_return' value='0'/>
-			<input type='hidden' name='rel_table' value='<?php print $vs_rel_table; ?>'/>
-			<input type='hidden' name='rel_type_id' value='<?php print $vn_rel_type_id; ?>'/>
-			<input type='hidden' name='rel_id' value='<?php print $vn_rel_id; ?>'/>
-<?php
-			if($this->request->getParameter('rel', pInteger)) {
-?>
-				<input type='hidden' name='rel' value='1'/>
-<?php
-			}
-?>
-		</form>
+				print join("\n", $va_form_elements);
+
+				if ($vb_can_edit) { print $vs_control_box; }
+	?>
+				<input type='hidden' name='object_id' value='<?php print $vn_object_id; ?>'/>
+				<input type='hidden' name='collection_id' value='<?php print $this->request->getParameter('collection_id', pInteger); ?>'/>
+				<input type='hidden' name='above_id' value='<?php print $vn_above_id; ?>'/>
+				<input id='isSaveAndReturn' type='hidden' name='is_save_and_return' value='0'/>
+				<input type='hidden' name='rel_table' value='<?php print $vs_rel_table; ?>'/>
+				<input type='hidden' name='rel_type_id' value='<?php print $vn_rel_type_id; ?>'/>
+				<input type='hidden' name='rel_id' value='<?php print $vn_rel_id; ?>'/>
+	<?php
+				if($this->request->getParameter('rel', pInteger)) {
+	?>
+					<input type='hidden' name='rel' value='1'/>
+	<?php
+				}
+	?>
+		</div>
 	</div>
-
+	</form>
 	<div class="editorBottomPadding"><!-- empty --></div>
 	
 	<?php print caSetupEditorScreenOverlays($this->request, $t_object, $va_bundle_list); ?>

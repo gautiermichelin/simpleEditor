@@ -29,17 +29,17 @@ function caSimpleEditorInspector($po_view, $pa_options=null) {
 
     $va_reps= $po_view->getVar('representations');
 
-
+    //var_dump($va_reps);die();
 
     $o_dm = Datamodel::load();
 
     $vs_buf = "";
+    $va_imgs = array();
     if (sizeof($va_reps) > 0) {
-        $va_imgs = array();
+
 
         $vn_r = $vn_primary_index = 0;
         foreach ($va_reps as $va_rep) {
-
             if (!($va_rep['info']['preview170']['WIDTH'] && $va_rep['info']['preview170']['HEIGHT'])) {
                 continue;
             }

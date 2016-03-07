@@ -41,12 +41,77 @@
   }
   #simple_editor_top {
     clear:both;
-  }
-  .sectionBox {
-    position:fixed;
-    overflow-y:scroll;
-    width:990px;
-    height:400px;
-    padding-right:10px;
+    #top_box {
+      clear:both;
+      #top_editor_box {
+        width:65%;
+        height:auto;
+        overflow: scroll;
+        padding-right:10px;
+
+        TEXTAREA {
+          max-width: 44%;
+        }
+        table {
+          max-width: 44% !important;
+        }
+        input[type="text"], input[type="textarea"], textarea, input[type="password"] {
+          border:none;
+        }
+        .bundleLabel {
+          margin: 0 2px 2px 0;
+          width:46%;
+          float:left;
+          .bundleContentPreview {
+            display: block;
+            text-overflow: ellipsis;
+            width: 100%;
+          }
+        }
+
+      }
+      #medias_box {
+        width:33%;float:right;
+        background: white;
+        box-shadow: 0px 0px 20px 0px #cfcfcf;
+      }
+    }
+}
+.sectionBox {
+  position:relative;
+  overflow-y:scroll;
+  width:990px;
+  height:400px;
+  padding-right:10px;
+}
+
+#screensList {
+  display: block;
+  clear:both;
+  max-height:40px;
+  height:40px;
+  width: auto;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  padding-top:20px;
+
+  .screen_button {
+    display: inline-block;
+    margin-right:4px;
+    margin-bottom:4px;
+    border:1px solid #ccc;
+    padding:6px;
+    line-height: 28px;
+    background-color: #ddd !important;
+    font-family: "din-regular", arial, sans-serif;
+      text-transform: uppercase;
+
+      color:#333;
+      text-decoration: inherit;
+      font-weight: bold;
+    }
+    .screen_button.current {
+      background-color: white !important;
+    }
   }
 }

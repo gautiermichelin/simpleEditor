@@ -84,7 +84,7 @@
 	</div>
 	<div id="simple_editor_top">
 		<div id="top_box">
-			<div id="medias_box">
+			<div id="medias_box" style="min-height:230px;">
 				<?php print caSimpleEditorInspector($this); ?>
 			</div>
 			<div id="top_editor_box">

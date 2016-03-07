@@ -163,7 +163,7 @@
 			//$return =array("start"=>$vs_start, "end"=>$vs_end, "request"=>$vs_request);
 
 			$vt_sl_search = new ObjectSearch();
-			$vs_search_request .= ($vs_request_idno ? "ca_objects.idno:".$vs_request_idno : "");
+			$vs_search_request = ($vs_request_idno ? "ca_objects.idno:".$vs_request_idno : "");
 
 
 			$vs_search_request .= ($vs_request_localisation ? ($vs_search_request ? " AND " : "")."ca_storage_locations.preferred_labels.name:\"".$vs_request_localisation."\"" : "");
@@ -199,7 +199,7 @@
 				$count++;
 			}
 			if ($vn_total_results > $vs_end) {
-				$return .= "<a class=\"jscroll-next\" href=\"http://villamedicis3.dev/index.php/simpleEditor/Objects/DoSearch/?start=".($vs_end+1)."&end=".($vs_end+$vs_num_results)."&request=".htmlentities($vs_request_idno)."\">next results</a>";
+				$return .= "<a class=\"jscroll-next\" href=\"http://villamedicis3.dev/index.php/simpleEditor/Objects/DoSearch/?start=".($vs_end+1)."&end=".($vs_end+$vs_num_results)."\">next results</a>";
 			}
 
 			//$return["reponse"] = 'ok';

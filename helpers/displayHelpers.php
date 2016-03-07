@@ -37,7 +37,6 @@ function caSimpleEditorInspector($po_view, $pa_options=null) {
     $va_imgs = array();
     if (sizeof($va_reps) > 0) {
 
-
         $vn_r = $vn_primary_index = 0;
         foreach ($va_reps as $va_rep) {
             if (!($va_rep['info']['preview170']['WIDTH'] && $va_rep['info']['preview170']['HEIGHT'])) {
@@ -53,7 +52,9 @@ function caSimpleEditorInspector($po_view, $pa_options=null) {
         }
     }
 
-    $vs_buf .= "<div id=\"simple_editor_main_img\" class=\"simple_editor_img_primary\"><img src=$va_img_primary /></div><p>";
+    if($va_img_primary) {
+        $vs_buf .= "<div id=\"simple_editor_main_img\" class=\"simple_editor_img_primary\"><img src=$va_img_primary /></div><p>";
+    }
     if (sizeof($va_imgs)) {
         foreach($va_imgs as $va_img) {
             $vs_imgs_buf .= "<img src=".$va_img.">";

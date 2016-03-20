@@ -60,27 +60,125 @@
 				//if (!$o_req->user->canDoAction('can_use_media_import_plugin')) { return true; }
 				
 				if (isset($pa_menu_bar['simpleEditor_menu'])) {
-					$va_menu_items = $pa_menu_bar['simpleEditor_menu']['navigation'];
-					if (!is_array($va_menu_items)) { $va_menu_items = array(); }
+					$va_simple_editor_menu_edit_items = $pa_menu_bar['simpleEditor_menu_edit']['navigation'];
+					if (!is_array($va_simple_editor_menu_edit_items)) { $va_simple_editor_menu_edit_items = array(); }
 				} else {
-					$va_menu_items = array();
+					$va_simple_editor_menu_edit_items = array();
 				}
-				
-				$va_menu_items["ca_objects"] = array(
+
+				$va_simple_editor_menu_new_items = array();
+
+				$va_simple_editor_menu_new_items["new_object"] = array(
+					'displayName' => "Nouvel objet",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/711'
+					)
+				);
+
+				$va_simple_editor_menu_edit_items["edit_object"] = array(
 					'displayName' => "Objet",
 					"default" => array(
 						'module' => 'simpleEditor',
 						'controller' => 'Objects',
-						'action' => 'edit'
+						'action' => 'edit/object_id/'
 					)
 				);
 
-				$pa_menu_bar['simpleEditor_menu'] = array(
-					'displayName' => _t('Simple Editor'),
-					'navigation' => $va_menu_items
+				$va_simple_editor_menu_new_items["new_entity_ind"] = array(
+					'displayName' => "Personne physique",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/711'
+					)
 				);
+				$va_simple_editor_menu_edit_items["edit_entity_ind"] = array(
+					'displayName' => "Personne physique",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Entities',
+						'action' => 'edit/entity_id/'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_place"] = array(
+					'displayName' => "Lieu",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/711'
+					)
+				);
+				$va_simple_editor_menu_edit_items["edit_place"] = array(
+					'displayName' => "Lieu",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'edit/object_id/3476'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_location"] = array(
+					'displayName' => "Emplacement de stockage",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/711'
+					)
+				);
+				$va_simple_editor_menu_edit_items["edit_location"] = array(
+					'displayName' => "Emplacement",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'edit/object_id/3476'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_coll"] = array(
+					'displayName' => "Collection",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/711'
+					)
+				);
+				$va_simple_editor_menu_edit_items["edit_coll"] = array(
+					'displayName' => "Collection",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'edit/object_id/3476'
+					)
+				);
+				$va_simple_editor_menu_edit_items["edit_occ_evt"] = array(
+					'displayName' => "Evénement",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'edit/object_id/3476'
+					)
+				);
+				$va_simple_editor_menu_edit_items["edit_occ_biblio"] = array(
+					'displayName' => "Bibliographie",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'edit/object_id/3476'
+					)
+				);
+				$pa_menu_bar_insert['simpleEditor_menu_edit'] = array(
+					'displayName' => _t('Editeur'),
+					'navigation' => $va_simple_editor_menu_edit_items
+				);
+				$pa_menu_bar_insert['simpleEditor_menu_new'] = array(
+					'displayName' => _t('Nouveau'),
+					'navigation' => $va_simple_editor_menu_new_items
+				);
+				unset($pa_menu_bar["New"]);
+				$pa_menu_bar["find"]["displayName"] = "Traitements par lots";
+				$pa_menu_bar = array_merge($pa_menu_bar_insert,$pa_menu_bar);
 			} 
-			
+			//var_dump($pa_menu_bar);die();
 			return $pa_menu_bar;
 		}
 		# -------------------------------------------------------

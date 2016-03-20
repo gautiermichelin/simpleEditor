@@ -48,7 +48,7 @@ require_once(__CA_LIB_DIR__.'/core/Print/PDFRenderer.php');
 
 define('__CA_SAVE_AND_RETURN_STACK_SIZE__', 30);
 
-class SimpleEditorBaseController extends ActionController {
+class SimpleEditorBaseAjaxController extends ActionController {
 	# -------------------------------------------------------
 	protected $opo_datamodel;
 	protected $opo_app_plugin_manager;
@@ -168,7 +168,7 @@ class SimpleEditorBaseController extends ActionController {
 			array(),
 			array()
 		);
-
+		//var_dump($va_nav);die();
 		if (!$this->request->getActionExtra() || !isset($va_nav['fragment'][str_replace("Screen", "screen_", $this->request->getActionExtra())])) {
 			if (($vs_bundle = $this->request->getParameter('bundle', pString)) && ($vs_bundle_screen = $t_ui->getScreenWithBundle($vs_bundle))) {
 				// jump to screen containing url-specified bundle
@@ -214,7 +214,9 @@ class SimpleEditorBaseController extends ActionController {
 
 		// if we came here through a rel link, show save and return button
 		$this->getView()->setVar('show_save_and_return', (bool) $this->getRequest()->getParameter('rel', pInteger));
-		$this->render("{$vs_view}.php");
+//var_dump("{$vs_view}.php");die();
+		return($this->render("{$vs_view}.php", $pb_dont_add_content_to_response=true));
+		exit();
 	}
 	# -------------------------------------------------------
 	/**
@@ -224,7 +226,6 @@ class SimpleEditorBaseController extends ActionController {
 	 */
 	public function Save($pa_options=null) {
 		list($vn_subject_id, $t_subject, $t_ui, $vn_parent_id, $vn_above_id, $vs_rel_table, $vn_rel_type_id, $vn_rel_id) = $this->_initView($pa_options);
-
 		if (!is_array($pa_options)) { $pa_options = array(); }
 
 		if (!$this->_checkAccess($t_subject)) { return false; }
@@ -288,7 +289,6 @@ class SimpleEditorBaseController extends ActionController {
 
 		if(!$vn_subject_id) { // this was an insert
 			$vn_subject_id = $t_subject->getPrimaryKey();
-
 			if (!$vb_save_rc) { // failed insert
 				$vs_message = _t("Could not save %1", $vs_type_name);
 			} else { // ok insert
@@ -418,7 +418,6 @@ class SimpleEditorBaseController extends ActionController {
 
 		$this->render('screen_html.php');
 	}
-
 	# -------------------------------------------------------
 	/**
 	 * Performs two-step delete of an existing record. The first step is a confirmation dialog, followed by actual deletion upon user confirmation

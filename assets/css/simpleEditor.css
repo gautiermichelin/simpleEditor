@@ -1,9 +1,4 @@
 /* line 1, ../scss/simpleEditor.scss */
-.leftSearchResult {
-  padding: 4px;
-}
-
-/* line 5, ../scss/simpleEditor.scss */
 #inspectorMedia div #inspectorInfoRepScrollingViewerContainer {
   position: relative;
   overflow: hidden;
@@ -13,92 +8,151 @@
   padding-top: 0px;
 }
 
-/* line 14, ../scss/simpleEditor.scss */
+/* line 10, ../scss/simpleEditor.scss */
 .simple_editor_img_primary {
   width: 100%;
   text-align: center;
 }
 
-/* line 19, ../scss/simpleEditor.scss */
+/* line 15, ../scss/simpleEditor.scss */
 .simple_editor_imgs img {
   max-height: 50px;
   margin: 4px;
 }
 
-/* line 25, ../scss/simpleEditor.scss */
+/* line 21, ../scss/simpleEditor.scss */
 #mainContent .watchThis, #mainContent #caDuplicateItemButton {
   line-height: 30px;
   margin-right: 4px;
   padding: 4px;
-  float: left;
+  display: inline-block;
   font-family: 'DIN-Regular';
   font-weight: bold;
 }
-/* line 33, ../scss/simpleEditor.scss */
+/* line 29, ../scss/simpleEditor.scss */
 #mainContent .watchThis A, #mainContent .watchThis A:hover, #mainContent #caDuplicateItemButton A, #mainContent #caDuplicateItemButton A:hover {
   color: inherit;
   text-decoration: inherit;
 }
-/* line 37, ../scss/simpleEditor.scss */
+/* line 33, ../scss/simpleEditor.scss */
 #mainContent .watchThis IMG, #mainContent #caDuplicateItemButton IMG {
   vertical-align: middle;
   padding-right: 2px;
 }
-/* line 42, ../scss/simpleEditor.scss */
+/* line 38, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top {
   clear: both;
 }
-/* line 44, ../scss/simpleEditor.scss */
+/* line 40, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box {
   clear: both;
 }
-/* line 46, ../scss/simpleEditor.scss */
+/* line 42, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #top_editor_box {
   width: 65%;
   height: auto;
-  overflow: scroll;
+  /*overflow: scroll;*/
   padding-right: 10px;
 }
+/* line 48, ../scss/simpleEditor.scss */
+#mainContent #simple_editor_top #top_box #top_editor_box #ObjectEditorTopForm {
+  display: block;
+}
 /* line 52, ../scss/simpleEditor.scss */
-#mainContent #simple_editor_top #top_box #top_editor_box TEXTAREA {
-  max-width: 44%;
-}
-/* line 55, ../scss/simpleEditor.scss */
-#mainContent #simple_editor_top #top_box #top_editor_box table {
-  max-width: 44% !important;
-}
-/* line 58, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #top_editor_box input[type="text"], #mainContent #simple_editor_top #top_box #top_editor_box input[type="textarea"], #mainContent #simple_editor_top #top_box #top_editor_box textarea, #mainContent #simple_editor_top #top_box #top_editor_box input[type="password"] {
   border: none;
 }
-/* line 61, ../scss/simpleEditor.scss */
+/* line 55, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #top_editor_box .bundleLabel {
   margin: 0 2px 2px 0;
-  width: 46%;
-  float: left;
 }
-/* line 65, ../scss/simpleEditor.scss */
+/* line 57, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #top_editor_box .bundleLabel .bundleContentPreview {
   display: block;
   text-overflow: ellipsis;
   width: 100%;
 }
-/* line 73, ../scss/simpleEditor.scss */
+/* line 65, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #medias_box {
   width: 33%;
   float: right;
   background: white;
   box-shadow: 0px 0px 20px 0px #cfcfcf;
+  height: 300px;
+  display: table;
 }
-/* line 80, ../scss/simpleEditor.scss */
-#mainContent .sectionBox {
-  position: relative;
-  overflow-y: scroll;
-  width: 990px;
-  height: 400px;
-  padding-right: 10px;
+/* line 73, ../scss/simpleEditor.scss */
+#mainContent #simple_editor_top #top_box #medias_box #simple_editor_main_img {
+  text-align: center;
+  height: 230px;
+  white-space: nowrap;
+  text-align: center;
+  margin: 1em 0;
+}
+/* line 79, ../scss/simpleEditor.scss */
+#mainContent #simple_editor_top #top_box #medias_box #simple_editor_main_img .helper {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+/* line 84, ../scss/simpleEditor.scss */
+#mainContent #simple_editor_top #top_box #medias_box #simple_editor_main_img img {
+  vertical-align: middle;
 }
 /* line 88, ../scss/simpleEditor.scss */
+#mainContent #simple_editor_top #top_box #medias_box #simple_editor_imgs {
+  display: table-row;
+}
+/* line 93, ../scss/simpleEditor.scss */
+#mainContent #simple_editor_top #top_box div.control-box {
+  padding: 0px;
+  text-align: left;
+  width: 99%;
+  float: none;
+  background-color: transparent;
+}
+/* line 101, ../scss/simpleEditor.scss */
+#mainContent #simple_editor_top #top_box a.form-button {
+  margin-right: 0px;
+}
+/* line 108, ../scss/simpleEditor.scss */
+#mainContent .attributeListItem textarea,
+#mainContent .bundleContainer textarea {
+  max-width: 74% !important;
+}
+/* line 113, ../scss/simpleEditor.scss */
+#mainContent .bundleContainer .caRelatedItem {
+  max-width: 90%;
+}
+/* line 117, ../scss/simpleEditor.scss */
+#mainContent .caItemList {
+  overflow-y: visible;
+}
+/* line 121, ../scss/simpleEditor.scss */
+#mainContent #lower_form {
+  position: fixed;
+  width: 1000px;
+  height: 350px;
+  overflow: scroll;
+  padding-right: 15px;
+}
+/* line 128, ../scss/simpleEditor.scss */
+#mainContent .sectionBox {
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+  -moz-column-gap: 0.5em;
+  -webkit-column-gap: 0.5em;
+  column-gap: 0.5em;
+  margin-bottom: 2px;
+}
+/* line 137, ../scss/simpleEditor.scss */
+#mainContent .sectionBox .bundleLabel {
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+}
+/* line 144, ../scss/simpleEditor.scss */
 #mainContent #screensList {
   display: block;
   clear: both;
@@ -106,10 +160,11 @@
   height: 40px;
   width: auto;
   overflow-y: hidden;
-  overflow-x: scroll;
-  padding-top: 20px;
+  /*overflow-x: scroll;*/
+  padding-top: 8px;
+  border-bottom: 1px solid #CCCCCC;
 }
-/* line 98, ../scss/simpleEditor.scss */
+/* line 155, ../scss/simpleEditor.scss */
 #mainContent #screensList .screen_button {
   display: inline-block;
   margin-right: 4px;
@@ -120,11 +175,65 @@
   background-color: #ddd !important;
   font-family: "din-regular", arial, sans-serif;
   text-transform: uppercase;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
   color: #333;
   text-decoration: inherit;
   font-weight: bold;
+  cursor: pointer;
 }
-/* line 113, ../scss/simpleEditor.scss */
+/* line 173, ../scss/simpleEditor.scss */
 #mainContent #screensList .screen_button.current {
   background-color: white !important;
+}
+
+/* line 180, ../scss/simpleEditor.scss */
+.leftSearchResultsWrapper {
+  width: 280px;
+  overflow: visible;
+}
+/* line 184, ../scss/simpleEditor.scss */
+.leftSearchResultsWrapper .leftSearchResults {
+  height: 100px;
+  overflow: auto;
+}
+/* line 188, ../scss/simpleEditor.scss */
+.leftSearchResultsWrapper .leftSearchResults .leftSearchResult {
+  padding: 4px;
+}
+/* line 190, ../scss/simpleEditor.scss */
+.leftSearchResultsWrapper .leftSearchResults .leftSearchResult IMG {
+  height: 40px;
+  width: auto;
+  float: left;
+  margin-right: 4px;
+}
+
+/* line 200, ../scss/simpleEditor.scss */
+#leftSearchResults,
+.scroll {
+  /*border: 1px solid #aaa;*/
+  padding: 5px 10px;
+  height: 450px;
+  overflow-y: scroll;
+  margin: 5px 12px 5px 3px;
+  /*background: #ffc;*/
+}
+
+/* line 209, ../scss/simpleEditor.scss */
+#leftSearchResult-form {
+  display: block;
+  margin: 10px;
+}
+
+/* line 213, ../scss/simpleEditor.scss */
+#leftSearchResult-form input {
+  margin-bottom: 3px;
+  border: 1px solid #ddd;
+  width: 100%;
+}
+
+/* line 220, ../scss/simpleEditor.scss */
+#navWrapper .sf-menu-search {
+  display: none;
 }

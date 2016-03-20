@@ -22,7 +22,7 @@ function caSimpleEditorInspector($po_view, $pa_options=null) {
 
     $t_item 				= $po_view->getVar('t_item');
     //var_dump($t_item->get("ca_objects.idno"));die();
-    $vs_table_name = $t_item->tableName();
+    //$vs_table_name = $t_item->tableName();
     if (($vs_priv_table_name = $vs_table_name) == 'ca_list_items') {
         $vs_priv_table_name = 'ca_lists';
     }
@@ -45,15 +45,17 @@ function caSimpleEditorInspector($po_view, $pa_options=null) {
 
             if ($vb_is_primary = (isset($va_rep['is_primary']) && (bool)$va_rep['is_primary'])) {
                 $vn_primary_index = $vn_r;
-                $va_img_primary = $va_rep['urls']['preview170'];
+                $va_img_primary = $va_rep['urls']['medium'];
             }
-            $va_imgs[$vn_r++] = $va_rep['urls']['preview170'];
+            $va_imgs[$vn_r++] = $va_rep['urls']['medium'];
             $vn_r++;
         }
     }
 
     if($va_img_primary) {
-        $vs_buf .= "<div id=\"simple_editor_main_img\" class=\"simple_editor_img_primary\"><img src=$va_img_primary /></div><p>";
+        $vs_buf .= "<div id=\"simple_editor_main_img\" class=\"simple_editor_img_primary\" style=\"background-image:url($va_img_primary);background-size:contain;background-position:50% 50%;background-repeat:no-repeat;\" onclick='caMediaPanel.showPanel(\"/index.php/find/SearchObjects/QuickLook/object_id/3476\"); return false;' ><span class=\"helper\"></span></div>";
+        //$vs_buf .= "<div><a class='qlButton' onclick='caMediaPanel.showPanel(\"/index.php/find/SearchObjects/QuickLook/object_id/3476\"); return false;' >Quick Look</a></div>";
+
     }
     if (sizeof($va_imgs)) {
         foreach($va_imgs as $va_img) {
@@ -67,15 +69,8 @@ function caSimpleEditorInspector($po_view, $pa_options=null) {
         jQuery(document).ready(function() {
             jQuery('.simple_editor_imgs IMG').on('click', function(){
                 var clicked_image_src = jQuery(this).attr('src');
-                console.log(clicked_image_src);
-                console.log(jQuery('#simple_editor_main_img').attr('src'));
-                var main_image = jQuery('#simple_editor_main_img > IMG');
-
-                //main_image.attr('src',clicked_image_src);
-                main_image.fadeOut('fast', function () {
-                    main_image.attr('src', clicked_image_src);
-                    main_image.fadeIn('fast');
-                });
+                var main_image = jQuery('#simple_editor_main_img');
+                main_image.css('background-image', 'url('+clicked_image_src+')');
             });
         });
     </script>

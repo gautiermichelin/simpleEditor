@@ -38,7 +38,7 @@
 	require_once(__CA_LIB_DIR__."/ca/Search/ObjectSearchResult.php");
 
 	require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorBaseController.php");
-
+	require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorBaseAjaxController.php");
 
 	class ObjectsController extends SimpleEditorBaseController {
  		# -------------------------------------------------------
@@ -63,28 +63,42 @@
  		# Functions to render views
  		# -------------------------------------------------------
  		public function Index($type="") {
- 			$universe=$this->request->getParameter('universe', pString);
- 			if(!isset($universe)) {
- 				_p("No corresponding table (or stat universe) declared.");
- 			} else {
-				$this->view->setVar('statistics_listing', $this->opa_statistics[$universe]);
-				$this->render('stats_home_html.php');			 				
- 			}
+		    $url = "/".str_ireplace("/index", "/Edit", $this->getRequest()->getRequestUrl());
+		    $this->redirect($url);
  		}
  				
  		public function Edit($pa_values=null, $pa_options=null) {
-			$vn_object_id=$this->request->getParameter('object_id', pInteger);
+		    $vn_object_id=$this->request->getParameter('object_id', pInteger);
+		    if($vn_object_id) {
+			    // Setting cookie of last edited object
+			    setcookie("simpleEditorObjectsControllerLastEdited", $vn_object_id, time()+3600*24*30,"/");
+		    } elseif ((int) $_COOKIE["simpleEditorObjectsControllerLastEdited"]>0) {
+			    $vn_object_id = $_COOKIE["simpleEditorObjectsControllerLastEdited"];
+			    $url = "/".str_ireplace("//","", str_ireplace("/object_id/","",$this->getRequest()->getRequestUrl()))."/object_id/".$vn_object_id;
+			    $this->redirect($url);
+		    } else {
+			    // Redirect to last added object
+		    }
+
+		    $vn_type_id=$this->request->getParameter('type_id', pInteger);
 
 			AssetLoadManager::register('bundleableEditor');
 			AssetLoadManager::register('imageScroller');
 			AssetLoadManager::register('ckeditor');
+			$script = file_get_contents(__CA_APP_DIR__."/plugins/simpleEditor/assets/js/simpleEditor.js");
+			AssetLoadManager::addComplementaryScript($script);
 
-			//var_dump($vn_object_id);die();
 			// Loading specific CSS
 			MetaTagManager::addLink('stylesheet', __CA_URL_ROOT__."/app/plugins/simpleEditor/assets/css/simpleEditor.css",'text/css');
 
 			// storing current screen number
 			$vs_last_selected_path_item = $this->getRequest()->getActionExtra();
+
+		    // checking inside the URL if we need to enclose with a FORM tag
+		    $form = $this->getRequest()->getParameter("form",pString);
+		    $this->view->setVar('form_tag', $form);
+
+
 			//var_dump($this->getRequest()->getActionExtra());
 			//die();
 
@@ -103,40 +117,127 @@
 			// Keeping here only non default screen
 			unset($va_screens[str_replace("Screen","screen_",$va_nav['defaultScreen'])]);
 			$this->view->setVar('screens', $va_screens);
-
 			// If we don't have a default screen loaded, avoid loading the default one, as it is already on the top left box
 			if(!$vs_last_selected_path_item || ($vs_last_selected_path_item=="Edit/".$va_nav['defaultScreen'])) {
 				$vs_last_selected_path_item = reset($va_screens)["default"]["action"];
 			};
+			//var_dump($vs_last_selected_path_item);die();
 			$this->view->setVar('last_selected_path_item', $vs_last_selected_path_item);
+
+		    if ($vn_type_id) {
+			    $this->view->setVar('type_id', $vn_type_id);
+		    }
+
+		    if ($vn_object_id) {
+				$this->view->setVar('object_id', $vn_object_id);
+				$vt_item = new ca_objects($vn_object_id);
+				$this->view->setVar('t_item', $vt_item);
+				$vt_representations = $vt_item->getRepresentations(array('preview170','medium'));
+				//var_dump($vt_representations);
+				$this->view->setVar('representations', $vt_representations);
+				parent::Edit($pa_values, $pa_options);
+			} else {
+				parent::Edit($pa_values, $pa_options);
+				//$this->render('edit_objects_html.php');
+			}
+
+ 		}
+
+		public function Save($pa_options=null) {
+			$vn_object_id=$this->request->getParameter('object_id', pInteger);
+			if($vn_object_id) {
+				// Setting cookie of last edited object
+				setcookie("simpleEditorObjectsControllerLastEdited", $vn_object_id, time()+3600*24*30,"/");
+			}
+			$vn_type_id=$this->request->getParameter('type_id', pInteger);
+
+			AssetLoadManager::register('bundleableEditor');
+			AssetLoadManager::register('imageScroller');
+			AssetLoadManager::register('ckeditor');
+			$script = file_get_contents(__CA_APP_DIR__."/plugins/simpleEditor/assets/js/simpleEditor.js");
+			AssetLoadManager::addComplementaryScript($script);
+
+			// Loading specific CSS
+			MetaTagManager::addLink('stylesheet', __CA_URL_ROOT__."/app/plugins/simpleEditor/assets/css/simpleEditor.css",'text/css');
+
+			// storing current screen number
+			$vs_last_selected_path_item = $this->getRequest()->getActionExtra();
+
+			// checking inside the URL if we need to enclose with a FORM tag
+			$form = $this->getRequest()->getParameter("form",pString);
+			$this->view->setVar('form_tag', $form);
+
+			// taken from BaseQuickAddController, there should be another to get default screen for an object, but it's 3 am...
+			$t_ui = ca_editor_uis::loadDefaultUI("ca_objects", $this->request);
+			$va_nav = $t_ui->getScreensAsNavConfigFragment($this->request, caGetDefaultItemID("object_types"), $this->request->getModulePath(), $this->request->getController(), $this->request->getAction(),
+				array(),
+				array(),
+				false,
+				array('hideIfNoAccess' => isset($pa_params['hideIfNoAccess']) ? $pa_params['hideIfNoAccess'] : false, 'returnTypeRestrictions' => true)
+			);
+			// Defining default screen
+			$this->view->setVar('default_screen', $va_nav['defaultScreen']);
+			// Getting all screens
+			$va_screens = $va_nav["fragment"];
+			// Keeping here only non default screen
+			unset($va_screens[str_replace("Screen","screen_",$va_nav['defaultScreen'])]);
+			$this->view->setVar('screens', $va_screens);
+			// If we don't have a default screen loaded, avoid loading the default one, as it is already on the top left box
+			if(!$vs_last_selected_path_item || ($vs_last_selected_path_item=="Edit/".$va_nav['defaultScreen'])) {
+				$vs_last_selected_path_item = reset($va_screens)["default"]["action"];
+			};
+
+			$this->view->setVar('last_selected_path_item', $vs_last_selected_path_item);
+
+			if ($vn_type_id) {
+				$this->view->setVar('type_id', $vn_type_id);
+			}
 
 			if ($vn_object_id) {
 				$this->view->setVar('object_id', $vn_object_id);
 				$vt_item = new ca_objects($vn_object_id);
 				$this->view->setVar('t_item', $vt_item);
-				$vt_representations = $vt_item->getRepresentations();
-				//var_dump($vt_representations);
+				$vt_representations = $vt_item->getRepresentations(array('preview170','medium'));
 				$this->view->setVar('representations', $vt_representations);
-				return parent::Edit($pa_values, $pa_options);
+				parent::Save($pa_options);
 			} else {
-				$this->render('edit_objects_html.php');
+				parent::Save($pa_options);
+				//$this->render('edit_objects_html.php');
 			}
 
- 		}
+		}
 
-		public function Save($pa_options = null) {
-			//return parent::Save($pa_options); // TODO: Change the autogenerated stub
-			die("ici");
+		public function Add($pa_options = null) {
+			$vn_object_id=$this->request->getParameter('object_id', pInteger);
+			if($vn_object_id) {
+				$url = "/".str_ireplace("/Add/", "/Edit/", $this->getRequest()->getRequestUrl()."/object_id/".$vn_object_id);
+				$this->redirect($url);
+			} else {
+				$vn_type_id=$this->request->getParameter('type_id', pInteger);
+				if(!$vn_type_id) {
+					$vt_list_entity_types = new ca_lists();
+					$vn_type_id = $vt_list_entity_types->getDefaultItemID("object_types");
+				}
+				$vt_object = new ca_objects();
+				$vt_object->setMode(ACCESS_WRITE);
+				//$pn_locale_id='1'; //Set the locale
+				$vt_object->set(array('access' => 2, 'status' => 3, 'idno' => '','type_id' => $vn_type_id));//Define some intrinsic data.
+				$vt_object->insert();//Insert the object
+				if($vt_object->numErrors()) {
+					var_dump($vt_object->getErrors());
+					die("Oups. Erreur.");
+				}
+				$url = "/".str_ireplace("/Add/", "/Edit/", $this->getRequest()->getRequestUrl()."/object_id/".$vt_object->getPrimaryKey());
+				$this->redirect($url);
+			}
 		}
 
 		public function DoSearch() {
 
-			//$_POST=array();
-			//var_dump($_POST);die();
-
 			$vs_start = $this->request->getParameter('start', pInteger);
 			$vs_end = $this->request->getParameter('end', pInteger);
 			$vs_request_idno = $this->request->getParameter('search-idno', pString);
+			$vs_request_tous_champs = $this->request->getParameter('search-tous-champs', pString);
 			$vs_request_localisation = $this->request->getParameter('search-localisation', pString);
 			$vs_request_datation = $this->request->getParameter('search-datation', pString);
 			$vs_request_technique = $this->request->getParameter('search-technique', pString);
@@ -144,13 +245,15 @@
 			$vs_request_auteur = $this->request->getParameter('search-auteur', pString);
 			$vs_request_domaine = $this->request->getParameter('search-domaine', pString);
 
-			setcookie("simpleEditorObjectsIdno",$vs_request_idno);
-			setcookie("simpleEditorObjectsLocalisation",$vs_request_localisation);
-			setcookie("simpleEditorObjectsDatation",$vs_request_datation);
-			setcookie("simpleEditorObjectsTechnique",$vs_request_technique);
-			setcookie("simpleEditorObjectsTitre",$vs_request_titre);
-			setcookie("simpleEditorObjectsAuteur",$vs_request_auteur);
-			setcookie("simpleEditorObjectsDomaine",$vs_request_domaine);
+			// Storing search form values inside a cookie
+			setcookie("simpleEditorObjectsIdno",$vs_request_idno, 0, "/");
+			setcookie("simpleEditorObjectsTousChamps",$vs_request_tous_champs, 0, "/");
+			setcookie("simpleEditorObjectsLocalisation",$vs_request_localisation, 0, "/");
+			setcookie("simpleEditorObjectsDatation",$vs_request_datation, 0, "/");
+			setcookie("simpleEditorObjectsTechnique",$vs_request_technique, 0, "/");
+			setcookie("simpleEditorObjectsTitre",$vs_request_titre, 0, "/");
+			setcookie("simpleEditorObjectsAuteur",$vs_request_auteur, 0, "/");
+			setcookie("simpleEditorObjectsDomaine",$vs_request_domaine, 0, "/");
 
 			$vs_num_results=12;
 
@@ -158,53 +261,44 @@
 			if(!(int) $vs_start) {$vs_start=1;}
 			if(!(int) $vs_end) {$vs_end=$vs_num_results;}
 			if(!$vs_request_idno)  {$vs_request_idno = "*";}
-			//var_dump("ca_objects.idno:\"".$vs_request_idno."\"");
-			//die();
-			//$return =array("start"=>$vs_start, "end"=>$vs_end, "request"=>$vs_request);
 
 			$vt_sl_search = new ObjectSearch();
-			$vs_search_request = ($vs_request_idno ? "ca_objects.idno:".$vs_request_idno : "");
 
-
+			// Creating search request
+			$vs_search_request = ($vs_request_tous_champs ? $vs_request_tous_champs : "");
+			$vs_search_request .= ($vs_request_idno ? ($vs_search_request ? " AND " : "")."ca_objects.idno:\"".$vs_request_idno."\"" : "");
 			$vs_search_request .= ($vs_request_localisation ? ($vs_search_request ? " AND " : "")."ca_storage_locations.preferred_labels.name:\"".$vs_request_localisation."\"" : "");
-			/*$vs_search_request .= ($vs_request_datation ? "ca_objects.idno:".$vs_request_datation : "");
-			$vs_search_request .= ($vs_request_technique ? "ca_objects.idno:".$vs_request_technique : "");*/
-			$vs_search_request .= ($vs_request_titre ? ($vs_search_request ? " AND " : "")."ca_objects.preferred_labels.name:\"".$vs_request_titre."\"" : ""); /*
-			$vs_search_request .= ($vs_request_auteur ? "ca_objects.idno:".$vs_request_auteur : "").
-			$vs_search_request .= ($vs_request_domaine ? "ca_objects.idno:".$vs_request_domaine : "");*/
-			//var_dump($vs_search_request);
-			//die();
+			$vs_search_request .= ($vs_request_datation ? ($vs_search_request ? " AND " : "")."ca_objects.objectProductionDate:\"".$vs_request_datation."\"" : "");
+			$vs_search_request .= ($vs_request_technique ? "ca_objects.idno:".$vs_request_technique : "");
+			$vs_search_request .= ($vs_request_titre ? ($vs_search_request ? " AND " : "")."ca_objects.preferred_labels.name:\"".$vs_request_titre."\"" : "");
+            $vs_search_request .= ($vs_request_auteur ? ($vs_search_request ? " AND " : "")."ca_entities.preferred_labels.displayname:\"".$vs_request_auteur."\"" : "");
+			$vs_search_request .= ($vs_request_domaine ? ($vs_search_request ? " AND " : "")."ca_objects.domaine:\"".$vs_request_domaine."\"" : "");
 
 			$qr_results = $vt_sl_search->search($vs_search_request);
 
 			$count = 1;
-			//$return["results"] = $qr_results->numHits();
+
 			$vn_total_results = $qr_results->numHits();
 
+			$return = "";
 			while($qr_results->nextHit()) {
 				if($count>= $vs_start && $count<= $vs_end) {
 					if ($vs_get_spec = $this->getRequest()->config->get("ca_objects_lookup_settings")) {
 						//var_dump($vs_get_spec);
 						$return .= "<div class=\"leftSearchResult\"><a href=\"".__CA_URL_ROOT__."/index.php/simpleEditor/Objects/Edit/object_id/".$qr_results->get("ca_objects.object_id")."\">";
 						$return .= $qr_results->get("ca_object_representations.media.icon");
-						$return .= "(".$qr_results->get("ca_objects.idno").") ";
 						$return .= $qr_results->get("ca_objects.preferred_labels");
+						$return .= " <small>(".$qr_results->get("ca_objects.idno").")</small> ";
 						$return .= "</a></div>";
-						//$vs_label = caProcessTemplateForIDs($vs_get_spec, "ca_objects", array($qr_results->get('ca_objects.object_id')));
-
 					}
-					//$return["html"] .= $vs_label;
 				}
 				//var_dump();
 				$count++;
 			}
 			if ($vn_total_results > $vs_end) {
-				$return .= "<a class=\"jscroll-next\" href=\"http://villamedicis3.dev/index.php/simpleEditor/Objects/DoSearch/?start=".($vs_end+1)."&end=".($vs_end+$vs_num_results)."\">next results</a>";
+				$return .= "<a class=\"jscroll-next\" href=\"".__CA_URL_ROOT__."/index.php/simpleEditor/Objects/DoSearch/?start=".($vs_end+1)."&end=".($vs_end+$vs_num_results)."\">next results</a>";
 			}
 
-			//$return["reponse"] = 'ok';
-
-			//echo json_encode($return);
 			print $return;
 			exit();
 		}

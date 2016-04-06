@@ -278,8 +278,11 @@ class SimpleEditorBaseController extends ActionController {
 		$this->opo_app_plugin_manager->hookBeforeSaveItem(array('id' => $vn_subject_id, 'table_num' => $t_subject->tableNum(), 'table_name' => $t_subject->tableName(), 'instance' => $t_subject, 'is_insert' => $vb_is_insert));
 
 		$vb_save_rc = false;
+		//var_dump($this->request->getActionExtra());die();
 		$va_opts = array_merge($pa_options, array('ui_instance' => $t_ui));
+
 		if ($this->_beforeSave($t_subject, $vb_is_insert)) {
+			//var_dump($this->request->getActionExtra());die();
 			if ($vb_save_rc = $t_subject->saveBundlesForScreen($this->request->getActionExtra(), $this->request, $va_opts)) {
 				$this->_afterSave($t_subject, $vb_is_insert);
 			}

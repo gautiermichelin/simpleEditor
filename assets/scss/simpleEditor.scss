@@ -184,9 +184,12 @@
   .leftSearchResults {
     height: 100px;
     overflow: auto;
+    cursor:pointer;
 
     .leftSearchResult{
       padding:4px;
+      min-height:48px;
+
       IMG {
         height:40px;
         width:auto;
@@ -214,4 +217,22 @@
   margin-bottom: 3px;
   border:1px solid #ddd;
   width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+#leftNav {
+  padding-top:38px;
+}
+
+
+#mainContent .attributeListItem textarea, #mainContent .bundleContainer textarea {
+  max-width: 300px !important;
+}
+
+div.caLabelList table table td {
+  // Fixe le problème des entités dans un tableau qui dépasse la largeur de colonne
+  display: inline-block;
 }

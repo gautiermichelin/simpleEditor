@@ -34,8 +34,8 @@ require_once(__CA_MODELS_DIR__.'/ca_object_representations_x_entities.php');
 require_once(__CA_MODELS_DIR__.'/ca_locales.php');
 
 
-require_once(__CA_LIB_DIR__."/ca/Search/ObjectSearch.php");
-require_once(__CA_LIB_DIR__."/ca/Search/ObjectSearchResult.php");
+require_once(__CA_LIB_DIR__."/ca/Search/EntitySearch.php");
+require_once(__CA_LIB_DIR__."/ca/Search/EntitySearchResult.php");
 
 require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorBaseController.php");
 require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorBaseAjaxController.php");
@@ -43,7 +43,7 @@ require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorBaseA
 class EntitiesController extends SimpleEditorBaseController {
 	# -------------------------------------------------------
 	protected $opo_config;		// plugin configuration file
-	protected $ops_table_name = 'ca_objects';		// name of "subject" table (what we're editing)
+	protected $ops_table_name = 'ca_entities';		// name of "subject" table (what we're editing)
 	# -------------------------------------------------------
 	public function __construct(&$po_request, &$po_response, $pa_view_paths=null) {
 		parent::__construct($po_request, $po_response, $pa_view_paths);
@@ -246,14 +246,14 @@ class EntitiesController extends SimpleEditorBaseController {
 		$vs_request_auteur = $this->request->getParameter('search-auteur', pString);
 		$vs_request_domaine = $this->request->getParameter('search-domaine', pString);
 
-		setcookie("simpleEditorObjectsIdno",$vs_request_idno);
-		setcookie("simpleEditorObjectsTousChamps",$vs_request_tous_champs);
-		setcookie("simpleEditorObjectsLocalisation",$vs_request_localisation);
-		setcookie("simpleEditorObjectsDatation",$vs_request_datation);
-		setcookie("simpleEditorObjectsTechnique",$vs_request_technique);
-		setcookie("simpleEditorObjectsTitre",$vs_request_titre);
-		setcookie("simpleEditorObjectsAuteur",$vs_request_auteur);
-		setcookie("simpleEditorObjectsDomaine",$vs_request_domaine);
+		setcookie("simpleEditorEntitiesIdno",$vs_request_idno);
+		setcookie("simpleEditorEntitiesTousChamps",$vs_request_tous_champs);
+		setcookie("simpleEditorEntitiesLocalisation",$vs_request_localisation);
+		setcookie("simpleEditorEntitiesDatation",$vs_request_datation);
+		setcookie("simpleEditorEntitiesTechnique",$vs_request_technique);
+		setcookie("simpleEditorEntitiesTitre",$vs_request_titre);
+		setcookie("simpleEditorEntitiesAuteur",$vs_request_auteur);
+		setcookie("simpleEditorEntitiesDomaine",$vs_request_domaine);
 
 		$vs_num_results=12;
 
@@ -265,53 +265,40 @@ class EntitiesController extends SimpleEditorBaseController {
 		//die();
 		//$return =array("start"=>$vs_start, "end"=>$vs_end, "request"=>$vs_request);
 
-		$vt_sl_search = new ObjectSearch();
+		$vt_sl_search = new EntitySearch();
 		$vs_search_request = ($vs_request_tous_champs ? $vs_request_tous_champs : "");
-		$vs_search_request .= ($vs_request_idno ? "ca_objects.idno:".$vs_request_idno : "");
+		$vs_search_request .= ($vs_request_idno ? "ca_entities.idno:".$vs_request_idno : "");
 		$vs_search_request .= ($vs_request_localisation ? ($vs_search_request ? " AND " : "")."ca_storage_locations.preferred_labels.name:\"".$vs_request_localisation."\"" : "");
-		/*$vs_search_request .= ($vs_request_datation ? "ca_objects.idno:".$vs_request_datation : "");
-		$vs_search_request .= ($vs_request_technique ? "ca_objects.idno:".$vs_request_technique : "");*/
-		$vs_search_request .= ($vs_request_titre ? ($vs_search_request ? " AND " : "")."ca_objects.preferred_labels.name:\"".$vs_request_titre."\"" : ""); /*
-			$vs_search_request .= ($vs_request_auteur ? "ca_objects.idno:".$vs_request_auteur : "").
-			$vs_search_request .= ($vs_request_domaine ? "ca_objects.idno:".$vs_request_domaine : "");*/
-		//var_dump($vs_search_request);
-		//die();
+		$vs_search_request .= ($vs_request_titre ? ($vs_search_request ? " AND " : "")."ca_entities.preferred_labels.displayname:\"".$vs_request_titre."\"" : ""); /**/
 
 		$qr_results = $vt_sl_search->search($vs_search_request);
 
 		$count = 1;
-		//$return["results"] = $qr_results->numHits();
 		$vn_total_results = $qr_results->numHits();
 
 		while($qr_results->nextHit()) {
 			if($count>= $vs_start && $count<= $vs_end) {
-				if ($vs_get_spec = $this->getRequest()->config->get("ca_objects_lookup_settings")) {
+				if ($vs_get_spec = $this->getRequest()->config->get("ca_entities_lookup_settings")) {
 					//var_dump($vs_get_spec);
-					$return .= "<div class=\"leftSearchResult\"><a href=\"".__CA_URL_ROOT__."/index.php/simpleEditor/Objects/Edit/object_id/".$qr_results->get("ca_objects.object_id")."\">";
+					$return .= "<div class=\"leftSearchResult\"><a href=\"".__CA_URL_ROOT__."/index.php/simpleEditor/Entities/Edit/entity_id/".$qr_results->get("ca_entities.entity_id")."\">";
 					$return .= $qr_results->get("ca_object_representations.media.icon");
-					$return .= $qr_results->get("ca_objects.preferred_labels");
-					$return .= " <small>(".$qr_results->get("ca_objects.idno").")</small> ";
+					$return .= $qr_results->get("ca_entities.preferred_labels.displayname");
+					$return .= " <small>(".$qr_results->get("ca_entities.idno").")</small> ";
 					$return .= "</a></div>";
-					//$vs_label = caProcessTemplateForIDs($vs_get_spec, "ca_objects", array($qr_results->get('ca_objects.object_id')));
 
 				}
-				//$return["html"] .= $vs_label;
 			}
-			//var_dump();
 			$count++;
 		}
 		if ($vn_total_results > $vs_end) {
-			$return .= "<a class=\"jscroll-next\" href=\"".__CA_URL_ROOT__."/index.php/simpleEditor/Objects/DoSearch/?start=".($vs_end+1)."&end=".($vs_end+$vs_num_results)."\">next results</a>";
+			$return .= "<a class=\"jscroll-next\" href=\"".__CA_URL_ROOT__."/index.php/simpleEditor/Entities/DoSearch/?start=".($vs_end+1)."&end=".($vs_end+$vs_num_results)."\">next results</a>";
 		}
 
-		//$return["reponse"] = 'ok';
-
-		//echo json_encode($return);
 		print $return;
 		exit();
 	}
 
 	public function SearchWidget() {
-		return $this->render("search_widget_objects_html.php",true);
+		return $this->render("search_widget_entities_html.php",true);
 	}
 }

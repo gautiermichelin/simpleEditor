@@ -42,7 +42,12 @@
 
 	$vs_last_selected_path_item = str_ireplace("edit/","",$this->getVar('last_selected_path_item'));
 	$vs_default_screen 	= $this->getVar('default_screen');
+
 	$va_screens = $this->getVar("screens");
+
+	// Getting first screen of non default ones
+	$vs_screen_code = key($va_screens);
+	$vs_first_non_default_screen = str_replace("screen_","Screen",$vs_screen_code);
 
 	switch($vs_subject_table) {
 		case "ca_occurrences":
@@ -80,7 +85,6 @@
 
 	$vn_subject_id = ($this->getVar('subject_id') ? $this->getVar('subject_id') : $this->getVar($vs_id_var));
 ?>
-	<script src="https://npmcdn.com/masonry-layout@4.0/dist/masonry.pkgd.min.js"></script>
 	<div id="topNavSecondLine"><div id="toolIcons">
 			<script type="text/javascript">
 				function caToggleItemWatch() {
@@ -112,13 +116,11 @@
 			</div>
 			<div id="top_editor_box">
 				<div class="control-box rounded" id="topButtons">
-						<a href="#" onclick=" jQuery(&quot;#ObjectEditorForm&quot;).submit();"
-						   class="form-button 1457282139"><span class="form-button"><img
-									src="<?php print __CA_THEME_URL__; ?>/graphics/buttons/glyphicons_198_ok.png"
-									border="0" class="form-button-left" style="padding-right: 10px"
-									data-pin-nopin="true">Enregistrer</span></a>
-						<div style="position: absolute; top: 0px; left:-5000px;"><input type="submit"></div>
-						<?php if ($vn_subject_id): ?>
+					<a href="#" class="form-button 1457282139" onclick="topformSubmitClicked();" id="<?php print $vs_form_id; ?>_submit"><span class="form-button"><img
+								src="<?php print __CA_THEME_URL__; ?>/graphics/buttons/glyphicons_198_ok.png"
+								border="0" class="form-button-left" style="padding-right: 10px"
+								data-pin-nopin="true">Enregistrer</span></a>
+					<?php if ($vn_subject_id): ?>
 						<a href="<?php print __CA_URL_ROOT__; ?>/index.php/simpleEditor/Objects/Edit/<?php print $vs_last_selected_path_item; ?>/object_id/<?php print $vn_subject_id; ?>"
 						   class="form-button"><span class="form-button "><img
 									src="<?php print __CA_THEME_URL__; ?>/graphics/buttons/glyphicons_445_floppy_remove.png"
@@ -160,7 +162,7 @@
 
 				<?php
 				// Saving with default editor
-				print caFormTag($this->request, 'Save/'.$vs_default_screen.'/'.$vs_id_var.'/'.$vn_subject_id.($vn_type_id ? "/type_id/".$vn_type_id : ""), 'ObjectEditorTopForm', "editor/objects/ObjectEditor", 'POST', 'multipart/form-data');
+				//print caFormTag($this->request, 'Save/'.$vs_default_screen.'/'.$vs_id_var.'/'.$vn_subject_id.($vn_type_id ? "/type_id/".$vn_type_id : ""), 'topform', "simpleEditor/".$vs_simpleEditor_controller, 'POST', 'multipart/form-data');
 
 				// Saving with simpleEditor
 				//print caFormTag($this->request, 'Save/'.$vs_default_screen.'/object_id/'.$vn_object_id, 'ObjectEditorTopForm', "simpleEditor/Objects", 'POST', 'multipart/form-data');
@@ -172,7 +174,7 @@
 				<div class="bundles" id="top_form">
 
 				</div>
-				</form>
+				<!--</form>-->
 
 			</div>
 		</div>
@@ -191,7 +193,7 @@
 		//print caNavLink($this->request, $va_screen["displayName"], $vs_class, "*", "*", $va_screen["default"]["action"],array("object_id"=>$vn_object_id) );
 		$vs_screen_name = str_ireplace("edit/","", $va_screen["default"]["action"]);
 		$vs_screen_name = str_ireplace("save/","", $vs_screen_name);
-		print "<a onclick=\"toggleSimpleEditorLowerForm('".$vs_simpleEditor_controller."Ajax"."','".$vs_screen_name."','".$vs_id_var."/".$vn_subject_id."');\" class=\"".$vs_class." ".$vs_screen_name."\">".$va_screen["displayName"]."</a>";
+		print "<a onclick=\"toggleSimpleEditorLowerForm('".$vs_simpleEditor_controller."Ajax"."','".$vs_screen_name."','".$vs_id_var."/".$vn_subject_id."','bottomform');\" class=\"".$vs_class." ".$vs_screen_name."\">".$va_screen["displayName"]."</a>";
 	}
 ?>
 	</div>
@@ -201,14 +203,57 @@
 	
 <?php
 	print caSetupEditorScreenOverlays($this->request, $t_object, $va_bundle_list);
-	$this_screen = ($vs_last_selected_path_item ?  $vs_last_selected_path_item : $vs_default_screen);
+	//Temporary disabling extraction of current screen
+	//$this_screen = ($vs_last_selected_path_item ?  $vs_last_selected_path_item : $vs_first_non_default_screen);
+	if($vs_last_selected_path_item != $vs_default_screen) {
+		$this_screen = $vs_last_selected_path_item;
+	} else {
+		$this_screen = $vs_first_non_default_screen;
+	}
+
+
 ?>
 
 <script type="text/javascript">
+	function toggleSimpleEditorLowerForm(ajaxController,screenname,id,form) {
+	    var url = "<?php print __CA_URL_ROOT__; ?>/index.php/simpleEditor/"+ajaxController+"/editAjax/"+screenname+"/"+id+"/form/"+form;
+	    console.log("Refreshing lower_form with "+url);
+	    jQuery.ajax({
+	      url: url,
+	      cache: false
+	    }).done(function( html ) {
+	        jQuery( "#lower_form" ).html(html);
+	        jQuery( "#lower_form" ).css("position","fixed");
+	        jQuery( "#lower_form" ).fadeIn();
+	    });
+	}
+
+	function loadSimpleEditorTopForm(ajaxController,screenname,id,form) {
+	    var url = "<?php print __CA_URL_ROOT__; ?>/index.php/simpleEditor/"+ajaxController+"/editAjax/"+screenname+"/"+id+"/form/"+form;
+	    console.log("Refreshing top_form with "+url);
+	    jQuery.ajax({
+	      url: url,
+	      cache: false
+	    }).done(function( html ) {
+	        jQuery( "#top_form" ).html(html);
+	        jQuery( "#top_form" ).fadeIn();
+	    });
+
+
+	}
+
 	jQuery(document).ready(function(){
-		loadSimpleEditorTopForm('<?php print $vs_simpleEditor_controller."Ajax"; ?>', '<?php print $vs_default_screen; ?>','<?php print "/".$vs_id_var."/".$vn_subject_id; ?>');
+		loadSimpleEditorTopForm('<?php print $vs_simpleEditor_controller."Ajax"; ?>', '<?php print $vs_default_screen; ?>','<?php print "/".$vs_id_var."/".$vn_subject_id; ?>','topform');
 		jQuery('#screensList').find("A").removeClass('current');
 		jQuery('#screensList').find("A.<?php print $this_screen; ?>").addClass('current');
-		toggleSimpleEditorLowerForm('<?php print $vs_simpleEditor_controller."Ajax"; ?>', '<?php print $this_screen; ?>','<?php print "/".$vs_id_var."/".$vn_subject_id; ?>');
+		window.setTimeout(toggleSimpleEditorLowerForm, 100,'<?php print $vs_simpleEditor_controller."Ajax"; ?>', '<?php print $this_screen; ?>','<?php print "/".$vs_id_var."/".$vn_subject_id; ?>','bottomform');
+
+	    jQuery("#top_editor_box .bundles").fadeIn();
+
+	    jQuery("#screensList a").on("click",function(){
+	        jQuery("#screensList").find("A").removeClass('current');
+	        jQuery(this).addClass('current');
+	        jQuery( "#lower_form" ).hide();
+	    });
 	});
 </script>

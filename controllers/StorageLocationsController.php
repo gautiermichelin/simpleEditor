@@ -312,6 +312,6 @@ class StorageLocationsController extends SimpleEditorBaseController {
 	}
 
 	public function SearchWidget() {
-		return $this->render("search_widget_objects_html.php",true);
+		return $this->render("search_widget_storage_locations_html.php",true);
 	}
 }

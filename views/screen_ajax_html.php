@@ -28,6 +28,7 @@
 	require_once(__CA_APP_DIR__."/plugins/simpleEditor/helpers/displayHelpers.php");
 
  	$t_object 			= $this->getVar('t_subject');
+	$vs_subject_table    = get_class($t_object);
 	$vn_object_id 		= ($this->getVar('subject_id') ? $this->getVar('subject_id') : $this->getVar('object_id'));
 	$vn_screen_name		= ($this->getVar('screen_name') ? $this->getVar('screen_name') : $this->getVar('object_id'));
 	$vn_above_id 		= $this->getVar('above_id');
@@ -40,17 +41,69 @@
 	$vn_rel_id			= $this->getVar('rel_id');
 
 	$vs_form_id         = ($this->getVar('form') ? $this->getVar('form') : "ObjectEditorForm");
-	$vb_no_form_tag        = ($vs_form_id == "none");
+	$vb_no_form_tag     = ($vs_form_id);
 
 	$vs_last_selected_path_item = $this->getVar('last_selected_path_item');
 	$vs_screen_name = str_replace("editAjax/","",$vs_last_selected_path_item);
+//var_dump($vs_screen_name);die();
+
 	//var_dump($vs_last_selected_path_item);die();
 	//var_dump($vs_default_screen == $vs_last_selected_path_item);die();
 	$va_screens = $this->getVar("screens");
 
-	//print caFormTag($this->request, 'Save/'.$this->request->getActionExtra().'/object_id/'.$vn_object_id, 'ObjectEditorForm', null, 'POST', 'multipart/form-data');
+switch($vs_subject_table) {
+	case "ca_occurrences":
+		$vs_classic_editor    = "/editor/occurrences/OccurrenceEditor";
+		$vs_id_var          = "occurrence_id";
+		$vs_simpleEditor_controller = "Occurrences";
+		break;
+	case "ca_storage_locations":
+		$vs_classic_editor    = "/editor/storage_locations/StorageLocationEditor";
+		$vs_id_var          = "location_id";
+		$vs_simpleEditor_controller = "StorageLocations";
+		break;
+	case "ca_collections":
+		$vs_classic_editor    = "/editor/collections/CollectionEditor";
+		$vs_id_var          = "collection_id";
+		$vs_simpleEditor_controller = "Collections";
+		break;
+	case "ca_places":
+		$vs_classic_editor    = "/editor/places/PlaceEditor";
+		$vs_id_var          = "place_id";
+		$vs_simpleEditor_controller = "Places";
+		break;
+	case "ca_entities":
+		$vs_classic_editor    = "/editor/entities/EntityEditor";
+		$vs_id_var          = "entity_id";
+		$vs_simpleEditor_controller = "Entities";
+		break;
+	case "ca_objects":
+	default:
+		$vs_classic_editor    = "/editor/objects/ObjectEditor";
+		$vs_id_var          = "object_id";
+		$vs_simpleEditor_controller = "Objects";
+		break;
+}
+$vn_subject_id = ($this->getVar('subject_id') ? $this->getVar('subject_id') : $this->getVar($vs_id_var));
+
+	//print '<span style="color:#eeeeee;">'.$vs_simpleEditor_controller.'/Save/'.$vs_screen_name.'/'.$vs_id_var.'/'.$vn_subject_id.($vn_type_id ? "/type_id/".$vn_type_id : "")."</span>";
+	// SIMPLE EDITOR SAVE
+	////model : /index.php/simpleEditor/ObjectsAjax/Save/Screen194/object_id/4170
+	//print caFormTag($this->request, 'Save/'.$vs_screen_name.'/'.$vs_id_var.'/'.$vn_subject_id.($vn_type_id ? "/type_id/".$vn_type_id : ""), $vs_form_id, "simpleEditor/".$vs_simpleEditor_controller, 'POST', 'multipart/form-data');
+	// SIMPLE EDITOR SAVE AJAX
+	print caFormTag($this->request, 'SaveAjax/'.$vs_screen_name.'/'.$vs_id_var.'/'.$vn_subject_id.($vn_type_id ? "/type_id/".$vn_type_id : ""), $vs_form_id, "simpleEditor/".$vs_simpleEditor_controller."Ajax", 'POST', 'multipart/form-data');
+	// CLASSIC EDITOR SAVE
+	//model2 : /index.php/editor/objects/ObjectEditor/Edit/Screen62/object_id/4170#
+	//print caFormTag($this->request, 'Save/'.$vs_screen_name.'/object_id/'.$vn_object_id, $vs_form_id, "editor/objects/ObjectEditor", 'POST', 'multipart/form-data');
 
 ?>
+
+	<!-- <a href="#" onclick=" jQuery(&quot;#<?php print $vs_form_id; ?>&quot;).submit();"
+	   class="form-button 1457282139"><span class="form-button"><img
+				src="<?php print __CA_THEME_URL__; ?>/graphics/buttons/glyphicons_198_ok.png"
+				border="0" class="form-button-left" style="padding-right: 10px"
+				data-pin-nopin="true">Enregistrer</span></a>-->
+
 	<div id="form_inner">
 <?php
 	if ($vb_can_edit) {
@@ -62,7 +115,7 @@
 		//print caFormTag($this->request, 'Save/'.$this->request->getActionExtra().'/object_id/'.$vn_object_id, $vs_form_id, "editor/objects/ObjectEditor", 'POST', 'multipart/form-data');
 
 		// Saving with simpleEditor
-		print caFormTag($this->request, 'Save/'.$this->request->getActionExtra().'/object_id/'.$vn_object_id, $vs_form_id, "simpleEditor/Objects", 'POST', 'multipart/form-data');
+		//print caFormTag($this->request, 'Save/'.$this->request->getActionExtra().'/object_id/'.$vn_object_id, $vs_form_id, "simpleEditor/Objects", 'POST', 'multipart/form-data');
 	}
 
 
@@ -73,7 +126,7 @@
 				$va_bundle_list = array();
 				$va_form_elements = $t_object->getBundleFormHTMLForScreen($vs_screen_name, array(
 										'request' => $this->request,
-										'formName' => 'ObjectEditorForm',
+										'formName' => $vs_form_id,
 										'forceHidden' => array('lot_id')
 									), $va_bundle_list);
 

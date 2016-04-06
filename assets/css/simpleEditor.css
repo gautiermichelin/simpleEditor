@@ -196,12 +196,14 @@
 .leftSearchResultsWrapper .leftSearchResults {
   height: 100px;
   overflow: auto;
+  cursor: pointer;
 }
-/* line 188, ../scss/simpleEditor.scss */
+/* line 189, ../scss/simpleEditor.scss */
 .leftSearchResultsWrapper .leftSearchResults .leftSearchResult {
   padding: 4px;
+  min-height: 48px;
 }
-/* line 190, ../scss/simpleEditor.scss */
+/* line 193, ../scss/simpleEditor.scss */
 .leftSearchResultsWrapper .leftSearchResults .leftSearchResult IMG {
   height: 40px;
   width: auto;
@@ -209,7 +211,7 @@
   margin-right: 4px;
 }
 
-/* line 200, ../scss/simpleEditor.scss */
+/* line 203, ../scss/simpleEditor.scss */
 #leftSearchResults,
 .scroll {
   /*border: 1px solid #aaa;*/
@@ -220,20 +222,35 @@
   /*background: #ffc;*/
 }
 
-/* line 209, ../scss/simpleEditor.scss */
+/* line 212, ../scss/simpleEditor.scss */
 #leftSearchResult-form {
   display: block;
   margin: 10px;
 }
 
-/* line 213, ../scss/simpleEditor.scss */
+/* line 216, ../scss/simpleEditor.scss */
 #leftSearchResult-form input {
   margin-bottom: 3px;
   border: 1px solid #ddd;
   width: 100%;
 }
 
-/* line 220, ../scss/simpleEditor.scss */
-#navWrapper .sf-menu-search {
+/* line 222, ../scss/simpleEditor.scss */
+.hidden {
   display: none;
+}
+
+/* line 226, ../scss/simpleEditor.scss */
+#leftNav {
+  padding-top: 38px;
+}
+
+/* line 231, ../scss/simpleEditor.scss */
+#mainContent .attributeListItem textarea, #mainContent .bundleContainer textarea {
+  max-width: 300px !important;
+}
+
+/* line 235, ../scss/simpleEditor.scss */
+div.caLabelList table table td {
+  display: inline-block;
 }

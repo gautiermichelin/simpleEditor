@@ -77,102 +77,94 @@
 					)
 				);
 
-				$va_simple_editor_menu_edit_items["edit_object"] = array(
-					'displayName' => "Objet",
-					"default" => array(
-						'module' => 'simpleEditor',
-						'controller' => 'Objects',
-						'action' => 'edit/object_id/'
-					)
-				);
-
 				$va_simple_editor_menu_new_items["new_entity_ind"] = array(
 					'displayName' => "Personne physique",
 					"default" => array(
 						'module' => 'simpleEditor',
-						'controller' => 'Objects',
-						'action' => 'add/type_id/711'
+						'controller' => 'Entities',
+						'action' => 'add/type_id/107'
 					)
 				);
-				$va_simple_editor_menu_edit_items["edit_entity_ind"] = array(
-					'displayName' => "Personne physique",
+				$va_simple_editor_menu_new_items["new_entity_org"] = array(
+					'displayName' => "Institution",
 					"default" => array(
 						'module' => 'simpleEditor',
 						'controller' => 'Entities',
-						'action' => 'edit/entity_id/'
-					)
-				);
-				$va_simple_editor_menu_new_items["new_place"] = array(
-					'displayName' => "Lieu",
-					"default" => array(
-						'module' => 'simpleEditor',
-						'controller' => 'Objects',
-						'action' => 'add/type_id/711'
-					)
-				);
-				$va_simple_editor_menu_edit_items["edit_place"] = array(
-					'displayName' => "Lieu",
-					"default" => array(
-						'module' => 'simpleEditor',
-						'controller' => 'Objects',
-						'action' => 'edit/object_id/3476'
+						'action' => 'add/type_id/108'
 					)
 				);
 				$va_simple_editor_menu_new_items["new_location"] = array(
 					'displayName' => "Emplacement de stockage",
 					"default" => array(
 						'module' => 'simpleEditor',
+						'controller' => 'StorageLocations',
+						'action' => 'add/type_id/172'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_expo"] = array(
+					'displayName' => "Exposition",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Occurrences',
+						'action' => 'add/type_id/140'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_biblio"] = array(
+					'displayName' => "Référence bibliographique",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Occurrences',
+						'action' => 'add/type_id/133'
+					)
+				);
+				$va_simple_editor_menu_edit_items["edit_object"] = array(
+					'displayName' => "Objet",
+					"default" => array(
+						'module' => 'simpleEditor',
 						'controller' => 'Objects',
-						'action' => 'add/type_id/711'
+						'action' => 'edit/object_id/4170'
+					)
+				);
+
+				$va_simple_editor_menu_edit_items["edit_entity_ind"] = array(
+					'displayName' => "Personne physique",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Entities',
+						'action' => 'edit/entity_id/11'
 					)
 				);
 				$va_simple_editor_menu_edit_items["edit_location"] = array(
 					'displayName' => "Emplacement",
 					"default" => array(
 						'module' => 'simpleEditor',
-						'controller' => 'Objects',
-						'action' => 'edit/object_id/3476'
-					)
-				);
-				$va_simple_editor_menu_new_items["new_coll"] = array(
-					'displayName' => "Collection",
-					"default" => array(
-						'module' => 'simpleEditor',
-						'controller' => 'Objects',
-						'action' => 'add/type_id/711'
-					)
-				);
-				$va_simple_editor_menu_edit_items["edit_coll"] = array(
-					'displayName' => "Collection",
-					"default" => array(
-						'module' => 'simpleEditor',
-						'controller' => 'Objects',
-						'action' => 'edit/object_id/3476'
+						'controller' => 'StorageLocations',
+						'action' => 'edit/location_id/35'
 					)
 				);
 				$va_simple_editor_menu_edit_items["edit_occ_evt"] = array(
 					'displayName' => "Evénement",
 					"default" => array(
 						'module' => 'simpleEditor',
-						'controller' => 'Objects',
-						'action' => 'edit/object_id/3476'
+						'controller' => 'Occurrences',
+						'action' => 'edit/occurrence_id'
 					)
 				);
 				$va_simple_editor_menu_edit_items["edit_occ_biblio"] = array(
 					'displayName' => "Bibliographie",
 					"default" => array(
 						'module' => 'simpleEditor',
-						'controller' => 'Objects',
-						'action' => 'edit/object_id/3476'
+						'controller' => 'Occurrences',
+						'action' => 'edit/occurrence_id'
 					)
-				);
-				$pa_menu_bar_insert['simpleEditor_menu_edit'] = array(
-					'displayName' => _t('Editeur'),
-					'navigation' => $va_simple_editor_menu_edit_items
 				);
 				$pa_menu_bar_insert['simpleEditor_menu_new'] = array(
 					'displayName' => _t('Nouveau'),
 					'navigation' => $va_simple_editor_menu_new_items
+				);
+				$pa_menu_bar_insert['simpleEditor_menu_edit'] = array(
+					'displayName' => _t('Fiches'),
+					'navigation' => $va_simple_editor_menu_edit_items
 				);
 				unset($pa_menu_bar["New"]);
 				$pa_menu_bar["find"]["displayName"] = "Traitements par lots";
@@ -195,13 +187,49 @@
 		}
 
 		public function hookRenderWidgets($pa_widgets_config) {
-			$pa_widgets_config["museesDeFranceRecolementInfo"] = array(
+			$pa_widgets_config["museesDeFranceRecolementInfoObjects"] = array(
 				"domain" => array(
 					"module" => "simpleEditor",
 					"controller" => "Objects"),
 				"handler" => array(
 					"module" => "simpleEditor",
 					"controller" => "Objects",
+					"action" => 'SearchWidget',
+					"isplugin" => true),
+				"requires" => array(),
+				"parameters" => array()
+			);
+			$pa_widgets_config["museesDeFranceRecolementInfoEntities"] = array(
+				"domain" => array(
+					"module" => "simpleEditor",
+					"controller" => "Entities"),
+				"handler" => array(
+					"module" => "simpleEditor",
+					"controller" => "Entities",
+					"action" => 'SearchWidget',
+					"isplugin" => true),
+				"requires" => array(),
+				"parameters" => array()
+			);
+			$pa_widgets_config["museesDeFranceRecolementInfoStorageLocations"] = array(
+				"domain" => array(
+					"module" => "simpleEditor",
+					"controller" => "StorageLocations"),
+				"handler" => array(
+					"module" => "simpleEditor",
+					"controller" => "StorageLocations",
+					"action" => 'SearchWidget',
+					"isplugin" => true),
+				"requires" => array(),
+				"parameters" => array()
+			);
+			$pa_widgets_config["museesDeFranceRecolementInfoOccurrences"] = array(
+				"domain" => array(
+					"module" => "simpleEditor",
+					"controller" => "Occurrences"),
+				"handler" => array(
+					"module" => "simpleEditor",
+					"controller" => "Occurrences",
 					"action" => 'SearchWidget',
 					"isplugin" => true),
 				"requires" => array(),

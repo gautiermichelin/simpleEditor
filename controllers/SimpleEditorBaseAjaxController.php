@@ -418,6 +418,215 @@ class SimpleEditorBaseAjaxController extends ActionController {
 
 		$this->render('screen_html.php');
 	}
+
+	public function SaveAjax($pa_options=null) {
+		list($vn_subject_id, $t_subject, $t_ui, $vn_parent_id, $vn_above_id, $vs_rel_table, $vn_rel_type_id, $vn_rel_id) = $this->_initView($pa_options);
+		if (!is_array($pa_options)) { $pa_options = array(); }
+
+		if (!$this->_checkAccess($t_subject)) { return false; }
+
+		if($vn_above_id) {
+			// Convert "above" id (the id of the record we're going to make the newly created record parent of
+			if (($t_instance = $this->opo_datamodel->getInstanceByTableName($this->ops_table_name)) && $t_instance->load($vn_above_id)) {
+				$vn_parent_id = $t_instance->get($vs_parent_id_fld = $t_instance->getProperty('HIERARCHY_PARENT_ID_FLD'));
+				$this->request->setParameter($vs_parent_id_fld, $vn_parent_id);
+				$this->view->setVar('parent_id', $vn_parent_id);
+			}
+		}
+
+		if (in_array($this->ops_table_name, array('ca_representation_annotations'))) { $vs_auth_table_name = 'ca_objects'; }
+
+		if(!sizeof($_POST)) {
+			$this->notification->addNotification(_t("Cannot save using empty request. Are you using a bookmark?"), __NOTIFICATION_TYPE_ERROR__);
+			$this->render('screen_html.php');
+			return;
+		}
+		// set "context" id from those editors that need to restrict idno lookups to within the context of another field value (eg. idno's for ca_list_items are only unique within a given list_id)
+		$vn_context_id = null;
+		if ($vs_idno_context_field = $t_subject->getProperty('ID_NUMBERING_CONTEXT_FIELD')) {
+			if ($vn_subject_id > 0) {
+				$this->view->setVar('_context_id', $vn_context_id = $t_subject->get($vs_idno_context_field));
+			} else {
+				if ($vn_parent_id > 0) {
+					$t_parent = $this->opo_datamodel->getInstanceByTableName($this->ops_table_name);
+					if ($t_parent->load($vn_parent_id)) {
+						$this->view->setVar('_context_id', $vn_context_id = $t_parent->get($vs_idno_context_field));
+					}
+				}
+			}
+
+			if ($vn_context_id) { $t_subject->set($vs_idno_context_field, $vn_context_id); }
+		}
+
+		if (!($vs_type_name = $t_subject->getTypeName())) {
+			$vs_type_name = $t_subject->getProperty('NAME_SINGULAR');
+		}
+
+		if ($vn_subject_id && !$t_subject->getPrimaryKey()) {
+			$this->notification->addNotification(_t("%1 does not exist", $vs_type_name), __NOTIFICATION_TYPE_ERROR__);
+			return;
+		}
+
+		$vb_is_insert = !$t_subject->getPrimaryKey();
+
+		# trigger "BeforeSaveItem" hook
+		$this->opo_app_plugin_manager->hookBeforeSaveItem(array('id' => $vn_subject_id, 'table_num' => $t_subject->tableNum(), 'table_name' => $t_subject->tableName(), 'instance' => $t_subject, 'is_insert' => $vb_is_insert));
+
+		$vb_save_rc = false;
+		$va_opts = array_merge($pa_options, array('ui_instance' => $t_ui));
+		if ($this->_beforeSave($t_subject, $vb_is_insert)) {
+			if ($vb_save_rc = $t_subject->saveBundlesForScreen($this->request->getActionExtra(), $this->request, $va_opts)) {
+				$this->_afterSave($t_subject, $vb_is_insert);
+			}
+		}
+		$this->view->setVar('t_ui', $t_ui);
+
+		if(!$vn_subject_id) { // this was an insert
+			$vn_subject_id = $t_subject->getPrimaryKey();
+			if (!$vb_save_rc) { // failed insert
+				$vs_message = _t("Could not save %1", $vs_type_name);
+			} else { // ok insert
+				$vs_message = _t("Added %1", $vs_type_name);
+				$this->request->setParameter($t_subject->primaryKey(), $vn_subject_id, 'GET');
+				$this->view->setVar($t_subject->primaryKey(), $vn_subject_id);
+				$this->view->setVar('subject_id', $vn_subject_id);
+				$this->request->session->setVar($this->ops_table_name.'_browse_last_id', $vn_subject_id);	// set last edited
+
+				// relate newly created record if requested
+				if($vs_rel_table && $vn_rel_type_id && $vn_rel_id) {
+					if($this->opo_datamodel->tableExists($vs_rel_table)) {
+						Debug::msg("[Save()] Relating new record using parameters from request: $vs_rel_table / $vn_rel_type_id / $vn_rel_id");
+						$t_subject->addRelationship($vs_rel_table, $vn_rel_id, $vn_rel_type_id);
+					}
+				}
+
+				// Set ACL for newly created record
+				if ($t_subject->getAppConfig()->get('perform_item_level_access_checking') && !$t_subject->getAppConfig()->get("{$this->ops_table_name}_dont_do_item_level_access_control")) {
+					$t_subject->setACLUsers(array($this->request->getUserID() => __CA_ACL_EDIT_DELETE_ACCESS__));
+					$t_subject->setACLWorldAccess($t_subject->getAppConfig()->get('default_item_access_level'));
+				}
+
+				// If "above_id" is set then, we want to load the record pointed to by it and set its' parent to be the newly created record
+				// The newly created record's parent is already set to be the current parent of the "above_id"; the net effect of all of this
+				// is to insert the newly created record between the "above_id" record and its' current parent.
+				if ($vn_above_id && ($t_instance = $this->opo_datamodel->getInstanceByTableName($this->ops_table_name, true)) && $t_instance->load($vn_above_id)) {
+					$t_instance->setMode(ACCESS_WRITE);
+					$t_instance->set('parent_id', $vn_subject_id);
+					$t_instance->update();
+
+					if ($t_instance->numErrors()) {
+						$this->notification->addNotification($t_instance->getErrorDescription(), __NOTIFICATION_TYPE_ERROR__);
+					}
+				}
+			}
+
+		} else {
+			$vs_message = _t("Saved changes to %1", $vs_type_name);
+		}
+
+		$va_errors = $this->request->getActionErrors();							// all errors from all sources
+		$va_general_errors = $this->request->getActionErrors('general');		// just "general" errors - ones that are not attached to a specific part of the form
+		if (is_array($va_general_errors) && sizeof($va_general_errors) > 0) {
+			foreach($va_general_errors as $o_e) {
+				$this->notification->addNotification($o_e->getErrorDescription(), __NOTIFICATION_TYPE_ERROR__);
+			}
+		}
+		if(sizeof($va_errors) - sizeof($va_general_errors) > 0) {
+			$va_error_list = array();
+			$vb_no_save_error = false;
+			foreach($va_errors as $o_e) {
+				$va_error_list[$o_e->getErrorDescription()] = "<li>".$o_e->getErrorDescription()."</li>\n";
+
+				switch($o_e->getErrorNumber()) {
+					case 1100:	// duplicate/invalid idno
+						if (!$vn_subject_id) {		// can't save new record if idno is not valid (when updating everything but idno is saved if it is invalid)
+							$vb_no_save_error = true;
+						}
+						break;
+				}
+			}
+			if ($vb_no_save_error) {
+				$this->notification->addNotification(_t("There are errors preventing <strong>ALL</strong> information from being saved. Correct the problems and click \"save\" again.\n<ul>").join("\n", $va_error_list)."</ul>", __NOTIFICATION_TYPE_ERROR__);
+			} else {
+				$this->notification->addNotification($vs_message, __NOTIFICATION_TYPE_INFO__);
+				$this->notification->addNotification(_t("There are errors preventing information in specific fields from being saved as noted below.\n<ul>").join("\n", $va_error_list)."</ul>", __NOTIFICATION_TYPE_ERROR__);
+			}
+		} else {
+			$this->notification->addNotification($vs_message, __NOTIFICATION_TYPE_INFO__);
+			$this->opo_result_context->invalidateCache();	// force new search in case changes have removed this item from the results
+			$this->opo_result_context->saveContext();
+		}
+		# trigger "SaveItem" hook
+
+		$this->opo_app_plugin_manager->hookSaveItem(array('id' => $vn_subject_id, 'table_num' => $t_subject->tableNum(), 'table_name' => $t_subject->tableName(), 'instance' => $t_subject, 'is_insert' => $vb_is_insert));
+
+		if (method_exists($this, "postSave")) {
+			$this->postSave($t_subject, $vb_is_insert);
+		}
+
+		// redirect back to previous item on stack if it's a valid "save and return" request
+		$vb_has_errors = (is_array($va_errors) && (sizeof($va_errors) > 0)); // don't redirect back when there were form errors
+		if(((bool) $this->getRequest()->getParameter('is_save_and_return', pInteger)) && !$vb_has_errors) {
+			$va_save_and_return = $this->getRequest()->session->getVar('save_and_return_locations');
+			if(is_array($va_save_and_return)) {
+				// get rid of all the navigational steps in the current item
+				do {
+					$va_pop = array_pop($va_save_and_return);
+				} while (
+					sizeof($va_save_and_return)>0 && // only keep going if there are more saved locations
+					(
+						!$va_pop['key'] || // keep going if key is empty (i.e. it was a "create new record" screen)
+						(($va_pop['table'] == $t_subject->tableName()) && ($va_pop['key'] == $vn_subject_id)) // keep going if the record is the current one
+					)
+				);
+
+				// the last pop must be from a different table or record for the redirect to kick in
+				// (which might not be the case because $va_save_and_return might have just run out of items for some reason)
+				if(($va_pop['table'] != $t_subject->tableName()) || ($va_pop['key'] != $vn_subject_id)) {
+					if(isset($va_pop['url_path']) && (strlen($va_pop['url_path']) > 0)) {
+						$this->getResponse()->setRedirect($va_pop['url_path']);
+					} else {
+						$this->getResponse()->setRedirect(caEditorUrl($this->getRequest(), $va_pop['table'], $va_pop['key']));
+					}
+				}
+			}
+		}
+
+		// save where we are in session for "Save and return" button
+		if($vn_subject_id) {
+			$va_save_and_return = $this->getRequest()->session->getVar('save_and_return_locations');
+			if(!is_array($va_save_and_return)) { $va_save_and_return = array(); }
+
+			$va_save = array(
+				'table' => $t_subject->tableName(),
+				'key' => $vn_subject_id,
+				// dont't direct back to Save action
+				'url_path' => str_replace('/Save/', '/Edit/', $this->getRequest()->getFullUrlPath()).$vn_subject_id
+			);
+
+			$this->getRequest()->session->setVar('save_and_return_locations', caPushToStack($va_save, $va_save_and_return, __CA_SAVE_AND_RETURN_STACK_SIZE__));
+		}
+
+		// if we came here through a rel link, show save and return button
+		$this->getView()->setVar('show_save_and_return', (bool) $this->getRequest()->getParameter('rel', pInteger));
+
+		/* Rappel :
+			 define('__NOTIFICATION_TYPE_ERROR__', 0);
+			 define('__NOTIFICATION_TYPE_WARNING__', 1);
+			 define('__NOTIFICATION_TYPE_INFO__', 2);
+		*/
+
+		print json_encode(
+			array(
+				"result"=>"saved",
+				"notifications"=>$this->notification->getNotifications(false)
+			),
+			JSON_PRETTY_PRINT
+		);
+		die();
+
+		//$this->render('screen_html.php');
+		}
 	# -------------------------------------------------------
 	/**
 	 * Performs two-step delete of an existing record. The first step is a confirmation dialog, followed by actual deletion upon user confirmation

@@ -28,7 +28,7 @@
 	require_once(__CA_APP_DIR__."/plugins/simpleEditor/helpers/displayHelpers.php");
 
  	$t_object 			= $this->getVar('t_subject');
-	$vs_subject_table    = get_class($t_object);
+	$vs_subject_table   = get_class($t_object);
 	$vn_object_id 		= ($this->getVar('subject_id') ? $this->getVar('subject_id') : $this->getVar('object_id'));
 	$vn_screen_name		= ($this->getVar('screen_name') ? $this->getVar('screen_name') : $this->getVar('object_id'));
 	$vn_above_id 		= $this->getVar('above_id');
@@ -130,7 +130,33 @@ $vn_subject_id = ($this->getVar('subject_id') ? $this->getVar('subject_id') : $t
 										'forceHidden' => array('lot_id')
 									), $va_bundle_list);
 
-				print join("\n", $va_form_elements);
+				$i = 0;
+				//print "<p><small>".$vs_screen_name."</small></p>";
+
+				switch(array($vs_screen_name, $i)) {
+					case array("Screen194", 5) :
+					case array("Screen67", 1) :
+					case array("Screen61", 5) :
+					case array("Screen64", 1) :
+					case array("Screen62", 6) :
+						print "<p class='columnbreak'></p>";
+						break;
+				}
+				foreach($va_form_elements as $num=>$va_form_element) {
+					// Top form column jump
+					switch(array($vs_screen_name, $i)) {
+						case array("Screen194", 5) :
+						case array("Screen67", 1) :
+						case array("Screen61", 5) :
+						case array("Screen64", 1) :
+						case array("Screen62", 6) :
+						case array("Screen185", 5) :
+							print "<p class='columnbreak'></p>";
+							break;
+					}
+					print "<div class='dontsplit dontsplit_$i $num'>".$va_form_element."</div>    \n";
+					$i++;
+				}
 
 				if ($vb_can_edit) { print $vs_control_box; }
 	?>

@@ -108,15 +108,7 @@
 
 		    }
 		    if($url) {
-			    var_dump($url);
-			    print "<script>
-			jQuery(document).ready(function() {
-					// similar behavior as clicking on a link
-					var href = \"".$url."\";
-					window.location.href = href;
-			});</script>"
-
-			    ;
+			    //var_dump($url);
 			    //die();
 		    }
 		    $vn_type_id=$this->request->getParameter('type_id', pInteger);

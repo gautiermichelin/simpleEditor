@@ -130,29 +130,28 @@
 }
 /* line 121, ../scss/simpleEditor.scss */
 #mainContent #lower_form {
-  position: fixed;
   width: 1000px;
   height: 350px;
   overflow: scroll;
   padding-right: 15px;
 }
-/* line 128, ../scss/simpleEditor.scss */
+/* line 127, ../scss/simpleEditor.scss */
 #mainContent .sectionBox {
-  -webkit-column-count: 2;
+  /*-webkit-column-count: 2;
   -moz-column-count: 2;
   column-count: 2;
   -moz-column-gap: 0.5em;
   -webkit-column-gap: 0.5em;
   column-gap: 0.5em;
-  margin-bottom: 2px;
+    margin-bottom: 2px;*/
 }
-/* line 137, ../scss/simpleEditor.scss */
+/* line 136, ../scss/simpleEditor.scss */
 #mainContent .sectionBox .bundleLabel {
   break-inside: avoid;
   display: inline-block;
-  width: 100%;
+  width: 98%;
 }
-/* line 144, ../scss/simpleEditor.scss */
+/* line 143, ../scss/simpleEditor.scss */
 #mainContent #screensList {
   display: block;
   clear: both;
@@ -164,7 +163,7 @@
   padding-top: 8px;
   border-bottom: 1px solid #CCCCCC;
 }
-/* line 155, ../scss/simpleEditor.scss */
+/* line 154, ../scss/simpleEditor.scss */
 #mainContent #screensList .screen_button {
   display: inline-block;
   margin-right: 4px;
@@ -182,28 +181,28 @@
   font-weight: bold;
   cursor: pointer;
 }
-/* line 173, ../scss/simpleEditor.scss */
+/* line 172, ../scss/simpleEditor.scss */
 #mainContent #screensList .screen_button.current {
   background-color: white !important;
 }
 
-/* line 180, ../scss/simpleEditor.scss */
+/* line 179, ../scss/simpleEditor.scss */
 .leftSearchResultsWrapper {
   width: 280px;
   overflow: visible;
 }
-/* line 184, ../scss/simpleEditor.scss */
+/* line 183, ../scss/simpleEditor.scss */
 .leftSearchResultsWrapper .leftSearchResults {
   height: 100px;
   overflow: auto;
   cursor: pointer;
 }
-/* line 189, ../scss/simpleEditor.scss */
+/* line 188, ../scss/simpleEditor.scss */
 .leftSearchResultsWrapper .leftSearchResults .leftSearchResult {
   padding: 4px;
   min-height: 48px;
 }
-/* line 193, ../scss/simpleEditor.scss */
+/* line 192, ../scss/simpleEditor.scss */
 .leftSearchResultsWrapper .leftSearchResults .leftSearchResult IMG {
   height: 40px;
   width: auto;
@@ -211,7 +210,7 @@
   margin-right: 4px;
 }
 
-/* line 203, ../scss/simpleEditor.scss */
+/* line 202, ../scss/simpleEditor.scss */
 #leftSearchResults,
 .scroll {
   /*border: 1px solid #aaa;*/
@@ -222,35 +221,49 @@
   /*background: #ffc;*/
 }
 
-/* line 212, ../scss/simpleEditor.scss */
+/* line 211, ../scss/simpleEditor.scss */
 #leftSearchResult-form {
   display: block;
   margin: 10px;
 }
 
-/* line 216, ../scss/simpleEditor.scss */
+/* line 215, ../scss/simpleEditor.scss */
 #leftSearchResult-form input {
   margin-bottom: 3px;
   border: 1px solid #ddd;
   width: 100%;
 }
 
-/* line 222, ../scss/simpleEditor.scss */
+/* line 221, ../scss/simpleEditor.scss */
 .hidden {
   display: none;
 }
 
-/* line 226, ../scss/simpleEditor.scss */
+/* line 225, ../scss/simpleEditor.scss */
 #leftNav {
   padding-top: 38px;
 }
 
-/* line 231, ../scss/simpleEditor.scss */
+/* line 230, ../scss/simpleEditor.scss */
 #mainContent .attributeListItem textarea, #mainContent .bundleContainer textarea {
   max-width: 300px !important;
 }
 
-/* line 235, ../scss/simpleEditor.scss */
+/* line 234, ../scss/simpleEditor.scss */
 div.caLabelList table table td {
   display: inline-block;
+}
+
+/* line 239, ../scss/simpleEditor.scss */
+span.columnbreak {
+  display: block;
+  border-bottom: 1px dashed black;
+  height: 4px;
+  margin: 0 30%;
+}
+
+/* line 241, ../scss/simpleEditor.scss */
+div.sectionBox > A {
+  display: block;
+  border: 3px solid blue;
 }

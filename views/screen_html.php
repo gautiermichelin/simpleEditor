@@ -223,8 +223,10 @@
 	      cache: false
 	    }).done(function( html ) {
 	        jQuery( "#lower_form" ).html(html);
-	        jQuery( "#lower_form" ).css("position","fixed");
+	        /*jQuery( "#lower_form" ).css("position","fixed");*/
 	        jQuery( "#lower_form" ).fadeIn();
+	        jQuery('#lower_form .sectionBox').columnize({columns:2, manualBreaks:true});
+
 	    });
 	}
 
@@ -237,9 +239,10 @@
 	    }).done(function( html ) {
 	        jQuery( "#top_form" ).html(html);
 	        jQuery( "#top_form" ).fadeIn();
+	        jQuery('#form_inner').columnize(
+	            {columns:2, buildOnce:false}
+            );
 	    });
-
-
 	}
 
 	jQuery(document).ready(function(){
@@ -255,5 +258,6 @@
 	        jQuery(this).addClass('current');
 	        jQuery( "#lower_form" ).hide();
 	    });
+
 	});
 </script>

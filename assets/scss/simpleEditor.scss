@@ -119,25 +119,24 @@
   }
 
   #lower_form {
-    position: fixed;
     width: 1000px;
     height: 350px;
     overflow: scroll;
     padding-right: 15px;
   }
   .sectionBox {
-  -webkit-column-count: 2;
+  /*-webkit-column-count: 2;
   -moz-column-count: 2;
   column-count: 2;
   -moz-column-gap: 0.5em;
   -webkit-column-gap: 0.5em;
   column-gap: 0.5em;
-    margin-bottom: 2px;
+    margin-bottom: 2px;*/
 
     .bundleLabel {
       break-inside: avoid;
       display:inline-block;
-      width: 100%;
+      width: 98%;
     }
   }
 
@@ -236,3 +235,10 @@ div.caLabelList table table td {
   // Fixe le problème des entités dans un tableau qui dépasse la largeur de colonne
   display: inline-block;
 }
+
+span.columnbreak { display:block; border-bottom:1px dashed black; height:4px; margin: 0 30%; }
+
+div.sectionBox > A {
+  display:block; border:3px solid blue;
+}
+

@@ -120,14 +120,13 @@
 				}
 
 				$va_reps = $t_object->getRepresentations(array('preview170','medium'));
-				//var_dump($va_reps);
-				//die();
+
 				$vs_buf = "";
 				$va_imgs = array();
 				if ((sizeof($va_reps) > 0) &&($vs_subject_table == "ca_objects")) {
 
 					$vn_r = $vn_primary_index = 0;
-					foreach ($va_reps as $key=>$va_rep) {
+					foreach ($va_reps as $va_rep) {
 						if (!($va_rep['info']['preview170']['WIDTH'] && $va_rep['info']['preview170']['HEIGHT'])) {
 							continue;
 						}
@@ -138,19 +137,19 @@
 							$va_img_primary_representation_id = $va_rep["representation_id"];
 							//die();
 						}
-						$va_imgs[$va_rep["representation_id"]] = $va_rep['urls']['medium'];
+						$va_imgs[$vn_r++] = $va_rep['urls']['medium'];
 						$vn_r++;
 					}
 
 					if($va_img_primary) {
-						$vs_buf .= "<div id=\"simple_editor_main_img\" class=\"simple_editor_img_primary\" style=\"background-image:url($va_img_primary);background-size:contain;background-position:50% 50%;background-repeat:no-repeat;\" data-object-id=\"".$vn_subject_id."\" data-representation-id=\"".$va_img_primary_representation_id."\" onclick='caMediaPanel.showPanel(\"".__CA_URL_ROOT__."/index.php/editor/objects/ObjectEditor/GetRepresentationEditor/object_id/".$vn_subject_id."/representation_id/\"+jQuery(this).data(\"representationId\")); return false;' ><span class=\"helper\"></span></div>";
+						$vs_buf .= "<div id=\"simple_editor_main_img\" class=\"simple_editor_img_primary\" style=\"background-image:url($va_img_primary);background-size:contain;background-position:50% 50%;background-repeat:no-repeat;\" onclick='caMediaPanel.showPanel(\"".__CA_URL_ROOT__."/index.php/editor/objects/ObjectEditor/GetRepresentationEditor/object_id/".$vn_subject_id."/representation_id/".$va_img_primary_representation_id."\"); return false;' ><span class=\"helper\"></span></div>";
 						//$vs_buf .= "<div><a class='qlButton' onclick='caMediaPanel.showPanel(\"/index.php/find/SearchObjects/QuickLook/object_id/3476\"); return false;' >Quick Look</a></div>";
 // index.php/editor/objects/ObjectEditor/GetRepresentationEditor/object_id/".$vn_subject_id."/representation_id/".$va_img_primary_representation_id
 
 					}
 					if (sizeof($va_imgs)) {
-						foreach($va_imgs as $key=>$va_img) {
-							$vs_imgs_buf .= "<span class='image-cell'><img src=".$va_img." data-representation-id=\"".$key."\"></span>";
+						foreach($va_imgs as $va_img) {
+							$vs_imgs_buf .= "<span class='image-cell'><img src=".$va_img."></span>";
 						}
 						$vs_buf .= "<div class='simple_editor_imgs_wrapper1'><div class='simple_editor_imgs_wrapper2'><div class='simple_editor_imgs'>".$vs_imgs_buf."</div></div></div>";
 					}
@@ -160,11 +159,8 @@
 					        jQuery(document).ready(function() {
 					            jQuery('.simple_editor_imgs IMG').on('click', function(){
 					                var clicked_image_src = jQuery(this).attr('src');
-					                var clicked_image_representation_id = jQuery(this).data('representationId');
 					                var main_image = jQuery('#simple_editor_main_img');
 					                main_image.css('background-image', 'url('+clicked_image_src+')');
-					                main_image.data('representationId', clicked_image_representation_id);
-					                main_image.attr('data-representation-id', clicked_image_representation_id);
 					            });
 					        });
 					    </script>

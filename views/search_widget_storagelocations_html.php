@@ -27,7 +27,6 @@
     <input name="search-idno" id="leftSearchResult-form-search-idno" <?php print($vs_request_idno ? "value=\"$vs_request_idno\"" : ""); ?> type="text" placeholder="Identifiant" title="Identifiant">
     <a href="#" id="leftSearchResult-icon" class="form-button 1457293322">
         <span class="form-button">
-            <img src="<?php print __CA_THEME_URL__; ?>/graphics/buttons/glyphicons_027_search.png" border="0" class="form-button-left" style="padding-right: 10px" data-pin-nopin="true">
             Recherche
         </span>
     </a>
@@ -49,11 +48,11 @@
                     jQuery("#leftSearchResults").html(html);
                     jQuery("#leftSearchResults").fadeIn();
                     jQuery(document).ready(function () {
-                        jQuery("#leftSearchResults").jscroll({
-                            debug: true,
-                            padding: 5,
-                            loadingHtml: '<small>...</small>'
-                        });
+                        //jQuery("#leftSearchResults").jscroll({
+                        //    debug: true,
+                        //    padding: 5,
+                        //    loadingHtml: '<small>...</small>'
+                        //});
                     });
                 }
             });

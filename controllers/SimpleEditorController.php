@@ -29,63 +29,68 @@
  	require_once(__CA_LIB_DIR__.'/core/TaskQueue.php');
  	require_once(__CA_LIB_DIR__.'/core/Configuration.php');
  	require_once(__CA_MODELS_DIR__.'/ca_lists.php');
-	require_once(__CA_MODELS_DIR__.'/ca_storage_locations.php');
-	require_once(__CA_MODELS_DIR__.'/ca_storage_location_labels.php');
  	require_once(__CA_MODELS_DIR__.'/ca_locales.php');
 
-
-	require_once(__CA_LIB_DIR__."/ca/Search/StorageLocationSearch.php");
-	require_once(__CA_LIB_DIR__."/ca/Search/StorageLocationSearchResult.php");
-
-require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorBaseController.php");
-require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorController.php");
+	require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorBaseController.php");
 	require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorBaseAjaxController.php");
 
-	class StorageLocationsController extends SimpleEditorController {
+	class SimpleEditorController extends SimpleEditorBaseController {
  		# -------------------------------------------------------
   		protected $opo_config;		// plugin configuration file
-		protected $ops_table_name = 'ca_storage_locations';		// name of "subject" table (what we're editing)
-		protected $ops_cookie_prefix = 'simpleEditorStorageLocationControllerLastEdited_';		// cookie prefix eventually followed by record type
-		protected $ops_record_id = 'location_id';		// name of "subject" table (what we're editing)
-		protected $ops_table_propername = "StorageLocations";
-		protected $ops_table_type_list = 'storage_location_types';
+		protected $ops_table_name;		// name of "subject" table (what we're editing)
+		protected $ops_cookie_prefix;		// cookie prefix eventually followed by record type
+		protected $ops_record_id;		// name of "subject" table (what we're editing)
+		protected $ops_table_propername;
+		protected $ops_table_type_list; 
 
 		# -------------------------------------------------------
-		public function __construct(&$po_request, &$po_response, $pa_view_paths=null) {
-			parent::__construct($po_request, $po_response, $pa_view_paths);
-
-			AssetLoadManager::register('panel');
-
- 			if (!$this->request->user->canDoAction('can_use_simple_editor_plugin')) {
- 				$this->response->setRedirect($this->request->config->get('error_display_url').'/n/3000?r='.urlencode($this->request->getFullUrlPath()));
- 				return;
- 			}
-
- 			$this->opo_config = Configuration::load(__CA_APP_DIR__.'/plugins/simpleEditor/conf/simpleEditor.conf');
-			$this->ops_table_name = 'ca_storage_locations';		// name of "subject" table (what we're editing)
-			$this->ops_cookie_prefix = 'simpleEditorStorageLocationControllerLastEdited_';		// cookie prefix eventually followed by record type
-			$this->ops_record_id = 'location_id';		// name of "subject" table (what we're editing)
-			$this->ops_table_propername = "StorageLocations";
-			$this->ops_table_type_list = 'storage_location_types';
- 		}
-
-
 
 		public function Add($pa_options = null) {
-			parent::Add($pa_options);
+			$vn_record_id=$this->request->getParameter($this->ops_record_id, pInteger);
+			if($vn_record_id) {
+				$url = "/".str_ireplace("/Add/", "/Edit/", $this->getRequest()->getRequestUrl()."/".$this->ops_record_id."/".$vn_record_id);
+			} else {
+				$vn_type_id=$this->request->getParameter('type_id', pInteger);
+				if(!$vn_type_id) {
+					$vt_list_entity_types = new ca_lists();
+					$vn_type_id = $vt_list_entity_types->getDefaultItemID($this->ops_table_type_list);
+				}
+				$vs_classname = $this->ops_table_name;
+				$vt_record = new $vs_classname();
+				$vt_record->setMode(ACCESS_WRITE);
+				//$pn_locale_id='1'; //Set the locale
+				$vt_record->set(array('access' => 1, 'status' => 3, 'idno' => '','type_id' => $vn_type_id));//Define some intrinsic data.
+				$vt_record->insert();//Insert the record
+				if($vt_record->numErrors()) {
+					var_dump($vt_record->getErrors());
+					die("Oups. Erreur.");
+				}
+				$url = "/".str_ireplace("/Add/", "/Edit/", $this->getRequest()->getRequestUrl()."/".$this->ops_record_id."/".$vt_record->getPrimaryKey());
+
+			}
+			$this->redirect($url);
 		}
 
-		public function DoSearch() {
+		public function ClearSearch() {
+			$vn_type_id=$this->request->getParameter('Type', pInteger);
 
-		}
-
-
-		public function SearchWidget() {
-			$vn_pos = $this->request->getParameter('pos', pInteger);
-			$this->view->setVar('pos', $vn_pos);
-			$vb_showallresults = $this->request->getParameter('showallresults', pInteger);
-			$this->view->setVar('showallresults', $vb_showallresults);
-			return $this->render("search_widget_".strtolower($this->ops_table_propername)."_html.php",true);
+			// Clear search cookies, giving them a "" value and an expiration date to yesterday
+			foreach($_COOKIE as $key=>$cookie) {
+				if(strpos($key, "simpleEditor".$this->ops_table_propername."ControllerSearch"."__".$vn_type_id)>-1) {
+					setcookie($key,"", time()-3600, "/");
+				}
+				if(strpos($key, "simpleEditorObjectsSearch")>-1 && $this->ops_table_propername="Objects") {
+					setcookie($key,"", time()-3600, "/");
+				}
+			}
+			//Redirect
+			if($vn_type_id != "") {
+				$url = "/".str_ireplace("/ClearSearch/Type/".$vn_type_id, "/edit", $this->getRequest()->getRequestUrl());	
+			} else {
+				$url = "/".str_ireplace("/ClearSearch", "/edit", $this->getRequest()->getRequestUrl());	
+			}
+			
+			$this->redirect($url);
 		}
 
 		public function Save($pa_values=null, $pa_options=null) {
@@ -161,31 +166,46 @@ require_once(__CA_APP_DIR__."/plugins/simpleEditor/controllers/SimpleEditorContr
 			//die();
 
 			// taken from BaseQuickAddController, there should be another to get default screen for an record, but it's 3 am...
-			$t_ui = ca_editor_uis::loadDefaultUI($this->ops_table_name, $this->request);
-			$va_nav = $t_ui->getScreensAsNavConfigFragment($this->request, caGetDefaultItemID($this->ops_table_type_list), $this->request->getModulePath(), $this->request->getController(), $this->request->getAction(),
-				array(),
-				array(),
-				false,
-				array('hideIfNoAccess' => isset($pa_params['hideIfNoAccess']) ? $pa_params['hideIfNoAccess'] : false, 'returnTypeRestrictions' => true)
-			);
-			// Defining default screen
-			$this->view->setVar('default_screen', $va_nav['defaultScreen']);
-			//var_dump($va_nav['defaultScreen']);die();
-			// Getting all screens
-			$va_screens = $va_nav["fragment"];
-			// Keeping here only non default screen
-			unset($va_screens[str_replace("Screen","screen_",$va_nav['defaultScreen'])]);
-			$this->view->setVar('screens', $va_screens);
-			// If we don't have a default screen loaded, avoid loading the default one, as it is already on the top left box
-			if(!$vs_last_selected_path_item || ($vs_last_selected_path_item=="Edit/".$va_nav['defaultScreen'])) {
-				$vs_last_selected_path_item = reset($va_screens)["default"]["action"];
-			};
-			//var_dump($vs_last_selected_path_item);die();
-			$this->view->setVar('last_selected_path_item', $vs_last_selected_path_item);
+					$t_ui = ca_editor_uis::loadDefaultUI($this->ops_table_name, $this->request, $vn_type_id);
+		$va_nav = $t_ui->getScreensAsNavConfigFragment($this->request, $vn_type_id, $this->request->getModulePath(), $this->request->getController(), $this->request->getAction(),
+			array(),
+			array(),
+			false,
+			array('hideIfNoAccess' => true, 'returnTypeRestrictions' => true)
+		);
 
-			if ($vn_type_id) {
-				$this->view->setVar('type_id', $vn_type_id);
+		// if we don't have a type fetch back the default one
+		if(!$vn_type_id) {
+			$vn_type_id = caGetDefaultItemID($this->ops_table_type_list);
+		}
+
+		// based on the record type, remove all screens we don't have right to access
+		foreach($va_nav["fragment"] as $screenname => $screen) {
+			if(is_array($screen["typeRestrictions"])) {
+				if(!isset($screen["typeRestrictions"][$vn_type_id])) {
+					//print "écran ".$screen["displayName"]." interdit pour ".$vn_type_id;
+					unset($va_nav["fragment"][$screenname]);
+				}
 			}
+		}
+
+		// Defining default screen
+		$this->view->setVar('default_screen', $va_nav['defaultScreen']);
+
+		// Getting all screens
+		$va_screens = $va_nav["fragment"];
+		// Keeping here only non default screen
+		unset($va_screens[str_replace("Screen","screen_",$va_nav['defaultScreen'])]);
+		$this->view->setVar('screens', $va_screens);
+		// If we don't have a default screen loaded, avoid loading the default one, as it is already on the top left box
+		if(!$vs_last_selected_path_item || ($vs_last_selected_path_item=="Edit/".$va_nav['defaultScreen'])) {
+			$vs_last_selected_path_item = reset($va_screens)["default"]["action"];
+		};
+		$this->view->setVar('last_selected_path_item', $vs_last_selected_path_item);
+
+		if ($vn_type_id) {
+			$this->view->setVar('type_id', $vn_type_id);
+		}
 			if ($vn_record_id) {
 				$this->view->setVar($this->ops_record_id, $vn_record_id);
 				$this->view->setVar('t_item', $vt_item);

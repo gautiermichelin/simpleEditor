@@ -53,6 +53,13 @@ class SimpleEditorBaseController extends ActionController {
 	protected $opo_datamodel;
 	protected $opo_app_plugin_manager;
 	protected $opo_result_context;
+	protected $opo_config;		// plugin configuration file
+	protected $ops_table_name;		// name of "subject" table (what we're editing)
+	protected $ops_cookie_prefix;		// cookie prefix eventually followed by record type
+	protected $ops_record_id;		// name of "subject" table (what we're editing)
+	protected $ops_table_type_list;
+	protected $ops_type_id;
+
 	# -------------------------------------------------------
 	#
 	# -------------------------------------------------------
@@ -67,7 +74,168 @@ class SimpleEditorBaseController extends ActionController {
 		$this->opo_datamodel = Datamodel::load();
 		$this->opo_app_plugin_manager = new ApplicationPluginManager();
 		$this->opo_result_context = new ResultContext($po_request, $this->ops_table_name, ResultContext::getLastFind($po_request, $this->ops_table_name));
+		
+		$this->ops_type_id="type_id";
+
 	}
+
+	# -------------------------------------------------------
+	# Functions to render views
+	# -------------------------------------------------------
+	public function Index($type="") {
+		$url = "/".str_ireplace("/index", "/Edit", $this->getRequest()->getRequestUrl());
+		$this->redirect($url);
+	}
+
+
+	public function Add($pa_options = null) {
+		parent::Add($pa_options);
+	}
+
+	public function Edit($pa_values=null, $pa_options=null) {
+
+		$vn_record_id=$this->request->getParameter($this->ops_record_id, pInteger);
+		$vs_request_url = $this->getRequest()->getRequestUrl();
+		
+
+		$url="";
+		$cookieLastEditedIsValid=false;
+
+
+		AssetLoadManager::register('bundleableEditor');
+		AssetLoadManager::register('imageScroller');
+		AssetLoadManager::register('ckeditor');
+
+		// check cookie validity
+		if (((int) $_COOKIE[$this->ops_cookie_prefix.$this->ops_type_id]>0) && (!$vn_record_id)) {
+			$vn_lastedited_record_id = $_COOKIE[$this->ops_cookie_prefix.$this->ops_type_id];
+			if($vn_type_id) {
+				$vs_request = "SELECT ".$this->ops_record_id." FROM ".$this->ops_table_name." WHERE deleted = 0 AND type_id=".$vn_type_id." AND ".$this->ops_record_id."= ?";	
+			} else {
+				$vs_request = "SELECT ".$this->ops_record_id." FROM ".$this->ops_table_name." WHERE deleted = 0 AND ".$this->ops_record_id."= ?";	
+			}
+			$o_data = new Db();
+			$qr_result = $o_data->query($vs_request, $vn_lastedited_record_id);
+			$cookieLastEditedIsValid = (sizeof($qr_result->getAllRows()) > 0);
+		}
+
+		if($vn_record_id) {
+			// Setting cookie of last edited object
+			$table = $this->ops_table_name;
+			$vt_item = new $table();
+			$vs_load_result = $vt_item->load($vn_record_id);
+			$vn_type_id = $vt_item->get("type_id");
+			setcookie($this->ops_cookie_prefix.$this->ops_type_id, $vn_record_id, time()+3600*24*30,"/");
+			//var_dump($vn_type_id);
+			if($vn_type_id) {
+				// Check if 
+				if($vt_item->get("type_id") != $vn_type_id) {
+					$url = "/".str_ireplace("//","", str_ireplace("/".$this->ops_record_id."/$vn_record_id","",$vs_request_url));
+				} else {
+					//$url = "/".str_ireplace("/type_id/".$vn_type_id,"/type_id/".$vt_item->get("type_id"),$vs_request_url);
+				}
+			} else {
+				$vn_type_id = $vt_item->get("type_id");
+				$url = "/".str_ireplace("//","", str_ireplace("/".$this->ops_record_id."/$vn_record_id","",$vs_request_url));
+			}
+		} elseif (!$cookieLastEditedIsValid) {
+			// Redirect to last added object
+			$o_data = new Db();
+			$vs_request = "SELECT min(".$this->ops_record_id.") as ".$this->ops_record_id." FROM ".$this->ops_table_name." WHERE deleted = 0";
+			if($vn_type_id) {
+				$vs_request .= " AND type_id=".$vn_type_id;
+			}
+			$qr_result = $o_data->query($vs_request);
+
+			while($qr_result->nextRow()) {
+				if ($qr_result->get($this->ops_record_id)) {
+					$url = "/".str_ireplace("//","", str_ireplace("/".$this->ops_record_id."/$vn_record_id","",$vs_request_url))."/".$this->ops_record_id."/".$qr_result->get($this->ops_record_id);
+					break;
+				}
+			}
+		} else {
+			//die("ici");
+			$table = $this->ops_table_name;
+			$vt_item = new $table();
+			$vs_load_result = $vt_item->load($vn_lastedited_record_id);
+			$vn_type_id = $vt_item->get("type_id");
+			//var_dump($vn_type_id);die();
+			//die("cookie valide");
+			$url = "/".str_ireplace("//","", str_ireplace("/".$this->ops_record_id."/$vn_record_id","",$vs_request_url))."/".$this->ops_record_id."/".$vn_lastedited_record_id."/type_id/".$vn_type_id;
+		}
+		if($url) {
+			//var_dump($url);
+			print "<script>
+        document.location.href=\"".$url."\";
+			</script>";
+		}
+
+
+		$script = file_get_contents(__CA_APP_DIR__."/plugins/simpleEditor/assets/js/simpleEditor.js");
+		AssetLoadManager::addComplementaryScript($script);
+
+		// Loading specific CSS
+		MetaTagManager::addLink('stylesheet', __CA_URL_ROOT__."/app/plugins/simpleEditor/assets/css/simpleEditor.css",'text/css');
+
+		// storing current screen number
+		$vs_last_selected_path_item = $this->getRequest()->getActionExtra();
+
+		// checking inside the URL if we need to enclose with a FORM tag
+		$form = $this->getRequest()->getParameter("form",pString);
+		$this->view->setVar('form_tag', $form);
+
+
+		//var_dump($this->getRequest()->getActionExtra());
+		//die();
+
+		// taken from BaseQuickAddController, there should be another to get default screen for an object, but it's 3 am...
+		$t_ui = ca_editor_uis::loadDefaultUI($this->ops_table_name, $this->request, $vn_type_id);
+		$va_nav = $t_ui->getScreensAsNavConfigFragment($this->request, $vn_type_id, $this->request->getModulePath(), $this->request->getController(), $this->request->getAction(),
+			array(),
+			array(),
+			false,
+			array('hideIfNoAccess' => true, 'returnTypeRestrictions' => true)
+		);
+
+		
+
+		// based on the record type, remove all screens we don't have right to access
+		foreach($va_nav["fragment"] as $screenname => $screen) {
+			if(is_array($screen["typeRestrictions"])) {
+				if(!isset($screen["typeRestrictions"][$vn_type_id])) {
+					//print "écran ".$screen["displayName"]." interdit pour ".$vn_type_id;
+					unset($va_nav["fragment"][$screenname]);
+				}
+			}
+		}
+
+		// Defining default screen
+		$this->view->setVar('default_screen', $va_nav['defaultScreen']);
+
+		// Getting all screens
+		$va_screens = $va_nav["fragment"];
+		// Keeping here only non default screen
+		unset($va_screens[str_replace("Screen","screen_",$va_nav['defaultScreen'])]);
+		$this->view->setVar('screens', $va_screens);
+		// If we don't have a default screen loaded, avoid loading the default one, as it is already on the top left box
+		if(!$vs_last_selected_path_item || ($vs_last_selected_path_item=="Edit/".$va_nav['defaultScreen'])) {
+			$vs_last_selected_path_item = reset($va_screens)["default"]["action"];
+		};
+		$this->view->setVar('last_selected_path_item', $vs_last_selected_path_item);
+
+
+		if ($vn_record_id) {
+			$this->view->setVar($this->ops_record_id, $vn_record_id);
+			$this->view->setVar('t_item', $vt_item);
+			$vt_representations = $vt_item->getRepresentations(array('preview170','medium'));
+			$this->view->setVar('representations', $vt_representations);
+			$this->Edit2($pa_values, $pa_options);
+		} else {
+			$this->Edit2($pa_values, $pa_options);
+			//$this->render('edit_objects_html.php');
+		}
+	}
+
 	# -------------------------------------------------------
 	/**
 	 * Generates a form for editing new or existing records. The form is rendered into the current view, inherited from ActionController
@@ -76,19 +244,25 @@ class SimpleEditorBaseController extends ActionController {
 	 * @param array $pa_options Array of options passed through to _initView
 	 *
 	 */
-	public function Edit($pa_values=null, $pa_options=null) {
-		AssetLoadManager::register('panel');
+	public function Edit2($pa_values=null, $pa_options=null) {
 
 		list($vn_subject_id, $t_subject, $t_ui, $vn_parent_id, $vn_above_id) = $this->_initView($pa_options);
 		$vs_mode = $this->request->getParameter('mode', pString);
 
 		if (!$this->_checkAccess($t_subject)) { return false; }
-
+		
+		$vn_type_id=$this->request->getParameter("type_id", pInteger);
+		// if we don't have a type fetch back the default one
+		if(!$vn_type_id) {
+			$vn_type_id = caGetDefaultItemID($this->ops_table_type_list);
+		}
+		$this->view->setVar('type_id', $vn_type_id);
+		
 		//
 		// Are we duplicating?
 		//
 		if (($vs_mode == 'dupe') && $this->request->user->canDoAction('can_duplicate_'.$t_subject->tableName())) {
-			if (!($vs_type_name = $t_subject->getTypeName())) {
+			if (!($vs_type_name = $t_subject->getTypeName())) { 
 				$vs_type_name = $t_subject->getProperty('NAME_SINGULAR');
 			}
 			// Trigger "before duplicate" hook
@@ -224,7 +398,7 @@ class SimpleEditorBaseController extends ActionController {
 	 */
 	public function Save($pa_options=null) {
 		list($vn_subject_id, $t_subject, $t_ui, $vn_parent_id, $vn_above_id, $vs_rel_table, $vn_rel_type_id, $vn_rel_id) = $this->_initView($pa_options);
-
+		
 		if (!is_array($pa_options)) { $pa_options = array(); }
 
 		if (!$this->_checkAccess($t_subject)) { return false; }
@@ -278,11 +452,10 @@ class SimpleEditorBaseController extends ActionController {
 		$this->opo_app_plugin_manager->hookBeforeSaveItem(array('id' => $vn_subject_id, 'table_num' => $t_subject->tableNum(), 'table_name' => $t_subject->tableName(), 'instance' => $t_subject, 'is_insert' => $vb_is_insert));
 
 		$vb_save_rc = false;
-		//var_dump($this->request->getActionExtra());die();
+
 		$va_opts = array_merge($pa_options, array('ui_instance' => $t_ui));
 
 		if ($this->_beforeSave($t_subject, $vb_is_insert)) {
-			//var_dump($this->request->getActionExtra());die();
 			if ($vb_save_rc = $t_subject->saveBundlesForScreen($this->request->getActionExtra(), $this->request, $va_opts)) {
 				$this->_afterSave($t_subject, $vb_is_insert);
 			}
@@ -558,7 +731,8 @@ class SimpleEditorBaseController extends ActionController {
 				$this->opo_app_plugin_manager->hookDeleteItem(array('id' => $vn_subject_id, 'table_num' => $t_subject->tableNum(), 'table_name' => $t_subject->tableName(), 'instance' => $t_subject));
 
 				# redirect
-				$this->redirectAfterDelete($t_subject->tableName());
+				//$this->redirectAfterDelete($t_subject->tableName());
+				$this->render('deleted_html.php');
 			}
 		}
 
@@ -574,7 +748,7 @@ class SimpleEditorBaseController extends ActionController {
 	 * @param string $ps_table table name
 	 */
 	protected function redirectAfterDelete($ps_table) {
-		caSetRedirect($this->opo_result_context->getResultsUrlForLastFind($this->getRequest(), $ps_table));
+		//caSetRedirect($this->opo_result_context->getResultsUrlForLastFind($this->getRequest(), $ps_table));
 	}
 	# -------------------------------------------------------
 	/**
@@ -2182,6 +2356,9 @@ class SimpleEditorBaseController extends ActionController {
 	 * @param array $pa_options Array of options passed through to _initView
 	 */
 	public function DownloadAttributeFile($pa_options=null) {
+		error_reporting(E_ALL);
+		ini_set('display_errors',true);
+		
 		if (!($pn_value_id = $this->request->getParameter('value_id', pInteger))) { return; }
 		$t_attr_val = new ca_attribute_values($pn_value_id);
 		if (!$t_attr_val->getPrimaryKey()) { return; }

@@ -125,6 +125,7 @@
 				print parent::Edit($pa_values, array("view"=>"screen_ajax_html"));
 				exit();
 			} else {
+				$this->view->setVar('type_id', $vn_type_id);
 				print parent::Edit($pa_values, array("view"=>"screen_ajax_html"));
 				exit();
 			}

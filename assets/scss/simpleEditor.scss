@@ -95,6 +95,7 @@
         text-align: left;
         width: 99%;
         float: none;
+        font-size:0.9em;
 
         background-color: transparent;
       }
@@ -242,3 +243,40 @@ div.sectionBox > A {
   display:block; border:3px solid blue;
 }
 
+.labelInfo {
+	border-top: none;
+    padding: 0px;
+    border-bottom: none;
+}
+
+.formLabel {
+    margin-bottom: 0px;
+}
+
+div.hierarchyBrowseTab {
+    width: inherit;
+    }
+    
+    
+div.hierarchyBrowseTab {
+    width: inherit;
+    }
+    
+span.image-cell {
+    display: table-cell;
+}
+div.simple_editor_imgs {
+	display:table-row;
+}
+div.simple_editor_imgs_wrapper2 {
+	display:table;
+	margin-bottom:22px;
+}
+div.simple_editor_imgs_wrapper1 {
+  width:320px;
+  overflow-x: scroll;
+}
+
+#leftNav #leftNavSidebar {
+	width:auto;
+	}

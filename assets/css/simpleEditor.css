@@ -17,7 +17,7 @@
 /* line 15, ../scss/simpleEditor.scss */
 .simple_editor_imgs img {
   max-height: 50px;
-  margin: 4px;
+  margin: 1px 3px;
 }
 
 /* line 21, ../scss/simpleEditor.scss */
@@ -61,6 +61,7 @@
 /* line 52, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #top_editor_box input[type="text"], #mainContent #simple_editor_top #top_box #top_editor_box input[type="textarea"], #mainContent #simple_editor_top #top_box #top_editor_box textarea, #mainContent #simple_editor_top #top_box #top_editor_box input[type="password"] {
   border: none;
+    /*max-width: 220px !important;*/
 }
 /* line 55, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #top_editor_box .bundleLabel {
@@ -70,24 +71,25 @@
 #mainContent #simple_editor_top #top_box #top_editor_box .bundleLabel .bundleContentPreview {
   display: block;
   text-overflow: ellipsis;
-  width: 100%;
+  width: 94%;
 }
 /* line 65, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #medias_box {
   width: 33%;
   float: right;
   background: white;
-  box-shadow: 0px 0px 20px 0px #cfcfcf;
-  height: 300px;
+  /*box-shadow: 0px 0px 20px 0px #cfcfcf;*/
+  height: 292px;
   display: table;
+  margin-top: -40px;
 }
 /* line 73, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #medias_box #simple_editor_main_img {
   text-align: center;
-  height: 230px;
+  height: 210px;
   white-space: nowrap;
   text-align: center;
-  margin: 1em 0;
+  margin: 0.3em 0;
 }
 /* line 79, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box #medias_box #simple_editor_main_img .helper {
@@ -110,6 +112,8 @@
   width: 99%;
   float: none;
   background-color: transparent;
+  font-size:0.9em;
+  margin-bottom: 0;
 }
 /* line 101, ../scss/simpleEditor.scss */
 #mainContent #simple_editor_top #top_box a.form-button {
@@ -118,8 +122,9 @@
 /* line 108, ../scss/simpleEditor.scss */
 #mainContent .attributeListItem textarea,
 #mainContent .bundleContainer textarea {
-  max-width: 74% !important;
+  max-width: 94% !important;
 }
+
 /* line 113, ../scss/simpleEditor.scss */
 #mainContent .bundleContainer .caRelatedItem {
   max-width: 90%;
@@ -130,10 +135,6 @@
 }
 /* line 121, ../scss/simpleEditor.scss */
 #mainContent #lower_form {
-  width: 1000px;
-  height: 350px;
-  overflow: scroll;
-  padding-right: 15px;
 }
 /* line 127, ../scss/simpleEditor.scss */
 #mainContent .sectionBox {
@@ -155,17 +156,16 @@
 #mainContent #screensList {
   display: block;
   clear: both;
-  max-height: 40px;
-  height: 40px;
   width: auto;
-  overflow-y: hidden;
+  /*overflow-y: hidden;*/
   /*overflow-x: scroll;*/
-  padding-top: 8px;
+  padding-top: 5px;
   border-bottom: 1px solid #CCCCCC;
 }
 /* line 154, ../scss/simpleEditor.scss */
 #mainContent #screensList .screen_button {
-  display: inline-block;
+	display: table-cell;
+	vertical-align: middle;
   margin-right: 4px;
   margin-bottom: 4px;
   border: 1px solid #ccc;
@@ -180,6 +180,11 @@
   text-decoration: inherit;
   font-weight: bold;
   cursor: pointer;
+  max-width:130px;
+  min-width:70px;
+  height:auto;
+  text-align: center;
+  line-height: 1.1em;
 }
 /* line 172, ../scss/simpleEditor.scss */
 #mainContent #screensList .screen_button.current {
@@ -215,7 +220,7 @@
 .scroll {
   /*border: 1px solid #aaa;*/
   padding: 5px 10px;
-  height: 450px;
+  height: 270px;
   overflow-y: scroll;
   margin: 5px 12px 5px 3px;
   /*background: #ffc;*/
@@ -234,6 +239,18 @@
   width: 100%;
 }
 
+#leftSearchResult-form a.form-button span {
+	padding: 6px 4px 0 4px;
+	font-family: Arial;
+	font-size:11px;
+	font-weight: normal;
+}
+
+#leftSearchResult-form a.form-button span.link-advanced-search {
+	background-color: lightgray;
+	padding:6px 0px 0px 0px; 
+	margin-left: 8px;
+}
 /* line 221, ../scss/simpleEditor.scss */
 .hidden {
   display: none;
@@ -245,9 +262,6 @@
 }
 
 /* line 230, ../scss/simpleEditor.scss */
-#mainContent .attributeListItem textarea, #mainContent .bundleContainer textarea {
-  max-width: 300px !important;
-}
 
 /* line 234, ../scss/simpleEditor.scss */
 div.caLabelList table table td {
@@ -267,3 +281,321 @@ div.sectionBox > A {
   display: block;
   border: 3px solid blue;
 }
+
+.labelInfo {
+	border:none;
+}
+
+
+.formLabel {
+    margin-bottom: 0px;
+}
+
+#P865topform_PrefLabel_10301 > div,
+div[id^="P865topform_PrefLabel_"] > div
+ {
+	display:none;
+}
+
+div[id^="P865topform_PrefLabel_"] textarea
+ {
+	display:block;
+	max-width: 100% !important;
+}
+.rulerBg {
+	background-image: none !important;
+    padding-right: 0 !important;
+}
+
+
+div.hierarchyBrowseTab {
+    width: inherit;
+    }
+    
+span.image-cell {
+    display: table-cell;
+}
+div.simple_editor_imgs {
+	display:table-row;
+}
+div.simple_editor_imgs_wrapper2 {
+	display:table;
+}
+div.simple_editor_imgs_wrapper1 {
+	width:320px;
+  overflow-x: scroll;
+}
+#leftNav #leftNavSidebar {
+	width:100% !important;
+}
+
+.attributeListItem td {
+    float: left;
+}
+
+select[id^="P860topform_type_idnew"] {
+	display:none;
+}
+
+#top_editor_box div[class*=location] .caAddItemButton {
+}
+
+div.caObjectRepresentationNewDetailEditorContainer {
+  width: auto;
+  display:none !important;
+}
+
+div[class*="ca_object_representations"] H2 {
+	display:none !important;
+}
+input[type="text"], input[type="textarea"], textarea, input[type="password"] {
+  border: 1px solid #ddd !important;
+  max-width: 94% !important;
+}
+
+#mainContent .attributeListItem textarea, #mainContent .bundleContainer textarea {
+    /*width: 100% !important;*/
+}
+
+table.attributeListItem {
+	width: 100% !important;
+}
+
+.attributeListItem td {
+}
+
+.attributeListItem td {
+    padding: 0px;
+    padding-right:20px;
+    margin:0px;
+    margin-left: 4px;
+    font-weight: normal;
+    vertical-align: top;
+}
+select.materiauxSelect,
+select.techniquesSelect,
+select.domainesSelect,
+select.localisationSelect
+{
+  width: 243px;
+  margin-right: 20px;
+  font-size: 12px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  margin-bottom: 3px;
+}
+
+/* To avoid a high sized block for left search results with entities */
+.leftSearchResultsWrapper .leftSearchResults .leftSearchResult.leftSearchResult-entities {
+  min-height: initial;
+}
+div.caLocationHistory {
+    padding: 3px;
+}
+#top_form input.lookupBg {
+	max-width: 220px !important;
+}
+
+#top_form div[class*="caRelatedItem"] span {
+	/*visibility:collapse;*/
+}
+
+#top_form div[class*="caRelatedItem"] span A {
+	/*visibility:visible;*/
+}
+
+.bundleContentPreview {
+    color: black;
+}
+.bundleLabel {
+	/*color:#888888;*/
+	color:#000000;
+	border: 1px solid #999999;
+}
+.button.labelInfo.caAddItemButton {
+	clear:both;
+}
+
+#mainContent #screensList .screen_button {
+	font-family: arial, sans-serif;
+	font-weight:bold;
+}
+a.caDeleteLabelButton {
+	display:none;
+}
+#lower_form .caObjectRepresentationListInfoSubDisplay {
+	display:none;
+}
+#lower_form .caSetImageCenterLaunchButton {
+	display:none !important;
+}
+
+div.caObjectRepresentationListInfo {
+}
+
+.caObjectRepresentationListActionButton {
+  display:inline-block;
+  margin:0;
+}
+.caSetImageCenterLaunchButton {display:none !important;}
+
+div.caObjectRepresentationMetadata {
+  width:auto;
+}
+
+div#P864topform_attribute_174 .caAddItemButton {
+	display:none !important;
+}
+
+form select {
+    padding: 2px;
+}
+
+.caDeleteItemButtonContainer {
+    margin-bottom: -40px;
+}
+
+#lower_form table.caListItem,
+#lower_form table.caListItem tbody,
+#lower_form table.caListItem tr,
+#lower_form table.caListItem td {
+	display:inline;
+}
+#lower_form table.caListItem input[type="text"] {
+	    max-width: 64% !important;
+}
+
+s {
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+}
+
+.caItemList {
+	max-height: none;
+}
+
+#leftNav #inspectorInfo {
+    width: 100%;
+}
+
+.classEntities108 .caAddLabelButton,
+.classOccurrences133 .caAddLabelButton,
+.classOccurrences140 .caAddLabelButton,
+#P1434topform_attribute_42 .caAddLabelButton,
+.classEntities108 #P1052topform_attribute_30 .caAddItemButton,
+.classEntities107 #P1454topform_attribute_961 .caAddItemButton,
+#P1003topform20_rel .relationship_typename,
+#P1033topform57_rel .relationship_typename,
+#P1436topform57_rel .relationship_typename,
+#P1439topform20_rel .relationship_typename,
+#P1452topformItem_38 .relationship_typename,
+#P1438topform67_rel .relationship_typename {
+	display:none !important;
+}
+
+.classEntities108 img[id*="ToggleButton"],
+.classOccurrences140 img[id*="ToggleButton"],
+.classOccurrences133 img[id*="ToggleButton"],
+.classEntities107 img[id*="ToggleButton"],
+.classEntities107 #ca_preferred_label_topform_P174,
+.classEntities108 #ca_preferred_label_topform_P936,
+.classEntities107 #topform_P1446,
+.classEntities107 .caObjectRepresentationListInfoSubDisplay,
+.classEntities107 #ca_attribute_topform_vitalDates,
+.classEntities108 #ca_attribute_topform_address,
+.classEntities107 #P763topform_attribute_572 .button,
+.classEntities107 #P763topform_attribute_572 .caDeleteItemButtonContainer {
+	display:none !important;
+}
+div.caObjectRepresentationDetailEditorContainer {
+	width: auto;
+	clear:both;
+}
+
+.classOccurrences140 #cke_1_top,
+.classOccurrences140 #cke_1_bottom,
+.classOccurrences133 #cke_1_bottom {
+	display: none;
+}
+
+
+.classOccurrences140 body.cke_editable.cke_editable_themed.cke_contents_ltr {
+	margin:50px;
+}
+div.caObjectRepresentationListActionButton {
+	margin-bottom: 4px;
+}
+div.caObjectRepresentationListActionButton span,
+.caObjectRepresentationListInfoSubDisplayUpdate A {
+	padding:4px;
+	border:1px solid lightgray;
+	border-radius:4px;
+	font-family: Arial;
+	font-weight: normal;
+	display:inline-block;
+	color:black;
+	text-decoration: none;
+	font-size:12px;
+}
+div.caObjectRepresentationListInfo .caObjectRepresentationListInfoSubDisplayUpdate a {
+	font-weight: normal;
+	font-size: 12px;
+}
+div.caObjectRepresentationListActionButton span A {
+	color:black;
+}
+
+.button.caAddItemButton a {
+	color:#888888;
+}
+
+.bundleContainer {
+	border-color: black;
+}
+
+#top_form #P1012topform_attribute_701 input.lookupBg {
+	max-width: none !important;
+}
+#cke_P929topform_Prefname_16 {
+	    width: 470px !important;
+}
+#navWrapper {
+    position: absolute;
+    float: none !important;
+    display: inline-block;
+    left: 354px;
+    text-align: left;
+        max-width: 700px;
+}
+#topNav {
+	background-color: transparent !important;
+	border-bottom: none !important;
+}
+
+.bundleLabel a.bundleDocumentationLink {
+    width: 220px;
+    height: 12px;
+    display: inline-block;
+    overflow: hidden;
+    background-size: 50px 10px;
+    background-repeat: no-repeat;
+    text-indent: 3000px;
+}
+
+input[type="checkbox"] {
+}
+
+.sf-menu li {
+    background: rgba(255,255,255,0.8);
+}
+
+#P929topform_PrefLabel_123 > BR {
+	display:none !important;
+}
+
+#P1485bottomform_BundleContentPreview {
+	display:none !important;
+}
+
+.download form select { 
+	display: none;
+	}

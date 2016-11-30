@@ -1,4 +1,5 @@
 // Simple binary to know if we need to recharge screen, defaulting to no error
+/*
 var ca_simpleeditor_form_errors=0;
 var ca_simpleeditor_topformSaveTreated=0;
 var ca_simpleeditor_bottomformSaveTreated=0;
@@ -87,4 +88,4 @@ var topformSubmitClicked = function() {
     jQuery("#lower_form").hide();
     jQuery("#lower_form").show();
 }
-
+*/

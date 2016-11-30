@@ -66,8 +66,17 @@
  			$this->render('edit_objects_index_html.php');
  		}
 
+ 		public function DownloadAttributeFile($pa_options=null) {
+	 		ini_set("display_errors",1);
+	 		error_reporting(E_ERROR);
+			$url =$this->request->getFullUrlPath();
+			$this->response->setRedirect(str_replace("simpleEditor/ObjectsAjax", "editor/objects/ObjectEditor", $url));
+			return;
+		}
+
 		public function EditAjax($pa_values=null, $pa_options=null) {
 			$vn_object_id=$this->request->getParameter('object_id', pInteger);
+			$vn_type_id=$this->request->getParameter("type_id", pInteger);
 
 			AssetLoadManager::register('bundleableEditor');
 			AssetLoadManager::register('imageScroller');
@@ -122,6 +131,8 @@
 				$vt_representations = $vt_item->getRepresentations(array('preview170','medium'));
 				//var_dump($vt_representations);
 				$this->view->setVar('representations', $vt_representations);
+				$this->view->setVar('type_id', $vn_type_id);
+
 				print parent::Edit($pa_values, array("view"=>"screen_ajax_html"));
 				exit();
 				//return ;

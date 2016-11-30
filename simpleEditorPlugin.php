@@ -25,7 +25,7 @@
  *
  * ----------------------------------------------------------------------
  */
- 
+  
 	class simpleEditorPlugin extends BaseApplicationPlugin {
 		# -------------------------------------------------------
 		protected $description = 'Simple Editor for CollectiveAccess';
@@ -68,17 +68,84 @@
 
 				$va_simple_editor_menu_new_items = array();
 
-				$va_simple_editor_menu_new_items["new_object"] = array(
-					'displayName' => "Nouvel objet",
+				$va_simple_editor_menu_new_items["new_object_tirage"] = array(
+					'displayName' => "Tirage",
 					"default" => array(
 						'module' => 'simpleEditor',
 						'controller' => 'Objects',
 						'action' => 'add/type_id/711'
 					)
 				);
+				$va_simple_editor_menu_new_items["new_object_peinture"] = array(
+					'displayName' => "Peinture",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/14209'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_object_arts_graphiques"] = array(
+					'displayName' => "Arts graphiques",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/14210'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_object_mobilier"] = array(
+					'displayName' => "Meuble",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/14211'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_object_instruments"] = array(
+					'displayName' => "Instrument de musique",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/14407'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_object_sculptures"] = array(
+					'displayName' => "Sculpture",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/14212'
+					)
+				);				
+				$va_simple_editor_menu_new_items["new_object_objet_art"] = array(
+					'displayName' => "Objet d'art",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/14213'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_object_tapisserie"] = array(
+					'displayName' => "Tapisserie",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/14214'
+					)
+				);
+				$va_simple_editor_menu_new_items["new_object_photographies"] = array(
+					'displayName' => "Photographie",
+					"default" => array(
+						'module' => 'simpleEditor',
+						'controller' => 'Objects',
+						'action' => 'add/type_id/14215'
+					)
+				);
+				$va_simple_editor_menu_new_items["edit_separator"] = array(
+					'displayName' => "<hr/>"
+				);
 
 				$va_simple_editor_menu_new_items["new_entity_ind"] = array(
-					'displayName' => "Personne physique",
+					'displayName' => "Individu",
 					"default" => array(
 						'module' => 'simpleEditor',
 						'controller' => 'Entities',
@@ -93,14 +160,6 @@
 						'action' => 'add/type_id/108'
 					)
 				);
-				$va_simple_editor_menu_new_items["new_location"] = array(
-					'displayName' => "Emplacement de stockage",
-					"default" => array(
-						'module' => 'simpleEditor',
-						'controller' => 'StorageLocations',
-						'action' => 'add/type_id/172'
-					)
-				);
 				$va_simple_editor_menu_new_items["new_expo"] = array(
 					'displayName' => "Exposition",
 					"default" => array(
@@ -110,7 +169,7 @@
 					)
 				);
 				$va_simple_editor_menu_new_items["new_biblio"] = array(
-					'displayName' => "Référence bibliographique",
+					'displayName' => "Bibliographie",
 					"default" => array(
 						'module' => 'simpleEditor',
 						'controller' => 'Occurrences',
@@ -122,32 +181,31 @@
 					"default" => array(
 						'module' => 'simpleEditor',
 						'controller' => 'Objects',
-						'action' => 'edit/object_id/4170'
+						'action' => 'edit'
 					)
 				);
-
 				$va_simple_editor_menu_edit_items["edit_entity_ind"] = array(
-					'displayName' => "Personne physique",
+					'displayName' => "Individu",
 					"default" => array(
 						'module' => 'simpleEditor',
 						'controller' => 'Entities',
-						'action' => 'edit/entity_id/11'
+						'action' => 'edit'
 					)
 				);
-				$va_simple_editor_menu_edit_items["edit_location"] = array(
-					'displayName' => "Emplacement",
+				$va_simple_editor_menu_edit_items["edit_entity_org"] = array(
+					'displayName' => "Institution",
 					"default" => array(
 						'module' => 'simpleEditor',
-						'controller' => 'StorageLocations',
-						'action' => 'edit/location_id/35'
+						'controller' => 'Entities',
+						'action' => 'edit/type_id/108'
 					)
 				);
 				$va_simple_editor_menu_edit_items["edit_occ_evt"] = array(
-					'displayName' => "Evénement",
+					'displayName' => "Exposition",
 					"default" => array(
 						'module' => 'simpleEditor',
 						'controller' => 'Occurrences',
-						'action' => 'edit/occurrence_id'
+						'action' => 'edit/type_id/140'
 					)
 				);
 				$va_simple_editor_menu_edit_items["edit_occ_biblio"] = array(
@@ -155,7 +213,7 @@
 					"default" => array(
 						'module' => 'simpleEditor',
 						'controller' => 'Occurrences',
-						'action' => 'edit/occurrence_id'
+						'action' => 'edit/type_id/133'
 					)
 				);
 				$pa_menu_bar_insert['simpleEditor_menu_new'] = array(
@@ -167,11 +225,22 @@
 					'navigation' => $va_simple_editor_menu_edit_items
 				);
 				unset($pa_menu_bar["New"]);
-				$pa_menu_bar["find"]["displayName"] = "Traitements par lots";
+				$pa_menu_bar["find"]["displayName"] = "Parcourir";
+				//var_dump($pa_menu_bar["find"]);
+				//die();
 				$pa_menu_bar = array_merge($pa_menu_bar_insert,$pa_menu_bar);
 			} 
 			//var_dump($pa_menu_bar);die();
 			return $pa_menu_bar;
+		}
+		
+		# -------------------------------------------------------
+		/**
+		 * Record editing activity
+		 */
+		public function hookEditItem($pa_params) {
+			var_dump($pa_params);die();
+			return $pa_params;
 		}
 		# -------------------------------------------------------
 		/**
@@ -236,6 +305,68 @@
 				"parameters" => array()
 			);
 			return $pa_widgets_config;
+		}
+
+		# -------------------------------------------------------
+		/**
+		 * Insert into ObjectEditor info (side bar)
+		 */
+		public function hookAppendToEditorInspector(array $va_params = array())
+		{
+			//MetaTagManager::addLink('stylesheet', __CA_URL_ROOT__."/app/plugins//museesDeFrance/assets/css/museesDeFrance.css",'text/css');
+
+			$t_item = $va_params["t_item"];
+			//die("here");
+
+			// basic zero-level error detection
+			if (!isset($t_item)) return false;
+
+			// fetching content of already filled vs_buf_append to surcharge if present (cumulative plugins)
+			if (isset($va_params["vs_buf_append"])) {
+				$vs_buf = $va_params["vs_buf_append"];
+			} else {
+				$vs_buf = "";
+			}
+
+			$vs_table_name = $t_item->tableName();
+			$vn_item_id = $t_item->getPrimaryKey();
+			if(method_exists($t_item,"getTypeCode")) {
+				$vn_code = $t_item->getTypeCode();
+
+				if ($vs_table_name == "ca_objects") {
+
+					$vs_simpleEditor_url = caNavUrl($this->getRequest(), "simpleEditor", "Objects", "edit", array("object_id"=>$vn_item_id));
+
+						$vs_buf = "<div style=\"margin:10px;border-radius:8px;padding:4px;background-color:#1ab3c8;color:white;text-align:center;\">"
+							. "<a href=\"" . $vs_simpleEditor_url . "\" class='form-button-gradient' style='color:white;text-decoration:none;text-transform:uppercase;'>"
+							. "Fiche objet"
+							. "</a></div>";
+				}
+				
+				if ($vs_table_name == "ca_entities") {
+
+					$vs_simpleEditor_url = caNavUrl($this->getRequest(), "simpleEditor", "Entities", "edit", array("entity_id"=>$vn_item_id, "type_id"=>$t_item->getTypeID()));
+
+						$vs_buf = "<div style=\"margin:10px;border-radius:8px;padding:4px;background-color:#1ab3c8;color:white;text-align:center;\">"
+							. "<a href=\"" . $vs_simpleEditor_url . "\" class='form-button-gradient' style='color:white;text-decoration:none;text-transform:uppercase;'>"
+							. "Fiche individu/institution"
+							. "</a></div>";
+				}
+
+				if ($vs_table_name == "ca_occurrences") {
+
+					$vs_simpleEditor_url = caNavUrl($this->getRequest(), "simpleEditor", "Occurrences", "edit", array("occurrence_id"=>$vn_item_id, "type_id"=>$t_item->getTypeID()));
+
+						$vs_buf = "<div style=\"margin:10px;border-radius:8px;padding:4px;background-color:#1ab3c8;color:white;text-align:center;\">"
+							. "<a href=\"" . $vs_simpleEditor_url . "\" class='form-button-gradient' style='color:white;text-decoration:none;text-transform:uppercase;'>"
+							. "Fiche bibliographie/exposition"
+							. "</a></div>";
+				}
+
+				$va_params["caEditorInspectorAppend"] = $vs_buf;
+			}
+
+			return $va_params;
 		}
 	}
 ?>

@@ -20,7 +20,8 @@ function caSimpleEditorInspector($po_view, $pa_options=null) {
     require_once(__CA_MODELS_DIR__.'/ca_sets.php');
     require_once(__CA_MODELS_DIR__.'/ca_data_exporters.php');
 
-    $t_item 				= $po_view->getVar('t_item');
+    $t_item 				= $po_view->getVar('t_subject');
+    //die();
     //var_dump($t_item->get("ca_objects.idno"));die();
     //$vs_table_name = $t_item->tableName();
     if (($vs_priv_table_name = $vs_table_name) == 'ca_list_items') {
@@ -29,7 +30,7 @@ function caSimpleEditorInspector($po_view, $pa_options=null) {
 
     $va_reps= $po_view->getVar('representations');
 
-    //var_dump($va_reps);die();
+    var_dump($va_reps);die();
 
     $o_dm = Datamodel::load();
 
@@ -61,7 +62,7 @@ function caSimpleEditorInspector($po_view, $pa_options=null) {
         foreach($va_imgs as $va_img) {
             $vs_imgs_buf .= "<img src=".$va_img.">";
         }
-        $vs_buf .= "<div class='simple_editor_imgs'>".$vs_imgs_buf."</div>";
+        $vs_buf .= "<div class='simple_editor_imgs_wrapper1'><div class='simple_editor_imgs_wrapper2'><div class='simple_editor_imgs'>".$vs_imgs_buf."</div></div></div>";
     }
 
     $vs_buf .= "

@@ -602,7 +602,11 @@ class SimpleEditorBaseController extends ActionController {
 	 * @param array $pa_options Array of options passed through to _initView
 	 */
 	public function Delete($pa_options=null) {
-		list($vn_subject_id, $t_subject, $t_ui) = $this->_initView($pa_options);
+
+        // Loading specific CSS
+        MetaTagManager::addLink('stylesheet', __CA_URL_ROOT__."/app/plugins/simpleEditor/assets/css/simpleEditor.css",'text/css');
+
+        list($vn_subject_id, $t_subject, $t_ui) = $this->_initView($pa_options);
 
 		if (!$vn_subject_id) { return; }
 

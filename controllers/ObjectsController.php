@@ -90,18 +90,31 @@
 			$vn_pos = $this->request->getParameter('pos', pString);
 			$vb_show_all_results = $this->request->getParameter('showallresults', pString);
 
-			$vs_start = $this->request->getParameter('start', pInteger);
-			$vs_end = $this->request->getParameter('end', pInteger);
+			//print "<!--";
+			$vs_start = $this->request->getParameter('search-start', pInteger);
+			//var_dump($vs_start);
+			$vs_end = $this->request->getParameter('search-end', pInteger);
+			//var_dump($vs_end);
 			$vs_request_tous_champs = $this->request->getParameter('search-tous-champs', pString);
+			//var_dump($vs_request_tous_champs);
 			$vs_request_idno = $this->request->getParameter('search-idno', pString);
+			//var_dump($vs_request_idno);
 			$vs_request_localisation = $this->request->getParameter('search-localisation', pString);
+			//var_dump($vs_request_localisation);
 			$vs_request_datation = $this->request->getParameter('search-datation', pString);
+			//var_dump($vs_request_datation);
 			$vs_request_technique = $this->request->getParameter('search-technique', pString);
-			$vs_request_materiau = $this->request->getParameter('search-materiau', pString);
 			//var_dump($vs_request_technique);
+			$vs_request_materiau = $this->request->getParameter('search-materiau', pString);
+			//var_dump($vs_request_materiau);
 			$vs_request_titre = $this->request->getParameter('search-titre', pString);
+			//var_dump($vs_request_titre);
 			$vs_request_auteur = $this->request->getParameter('search-auteur', pString);
+			//var_dump($vs_request_auteur);
 			$vs_request_domaine = $this->request->getParameter('search-domaine', pString);
+			//var_dump($vs_request_domaine);
+
+			//print "-->";
 
 			// Storing search form values inside a cookie
 			setcookie("simpleEditor".$this->ops_table_propername."SearchPos",$vs_pos, time()+3600, __CA_URL_ROOT__);
@@ -177,7 +190,19 @@
 <?php		
 			}
 			if ($vn_total_results > $vs_end) {
-				$return .= "<a class=\"jscroll-next\" href=\"".__CA_URL_ROOT__."/index.php/simpleEditor/Objects/DoSearch/?start=".($vs_end+1)."&end=".($vs_end+$vs_num_results)."\">next results</a>";
+				$return .= "<a class=\"jscroll-next\" href=\"".__CA_URL_ROOT__."/index.php/simpleEditor/Objects/DoSearch/?search-start=".($vs_end+1)
+                    ."&search-end=".($vs_end+$vs_num_results)
+                    ."&pos="
+                    ."&search-tous-champs=".htmlentities($vs_request_tous_champs)
+                    ."&search-localisation=".htmlentities($vs_request_localisation)
+                    ."&search-datation=".htmlentities($vs_request_datation)
+                    ."&search-materiau=".htmlentities($vs_request_materiau)
+                    ."&search-technique=".htmlentities($vs_request_technique)
+                    ."&search-titre=".htmlentities($vs_request_titre)
+                    ."&search-auteur=".htmlentities($vs_request_auteur)
+                    ."&search-domaine=".htmlentities($vs_request_domaine)
+                    ."&search-idno=".htmlentities($vs_request_idno)
+                    ."\">next results</a>";
 			} else {
 				$return .= "<a class=\"jscroll-next\"><!-- no more results to display, so no scrolling --></a>";
 			}

@@ -736,7 +736,8 @@ class SimpleEditorBaseController extends ActionController {
 
 				# redirect
 				//$this->redirectAfterDelete($t_subject->tableName());
-				$this->render('deleted_html.php');
+                $this->response->setRedirect(caNavUrl($this->request, 'simpleEditor', 'Objects', 'edit', array()));
+				//$this->render('deleted_html.php');
 			}
 		}
 

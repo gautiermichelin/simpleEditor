@@ -173,6 +173,7 @@
                 data: jQuery("form#leftSearchResult-form").serialize(),
                 dataType: 'html', // JSON
                 success: function (html) { // Je récupère la réponse du fichier PHP
+                    console.log(jQuery("form#leftSearchResult-form").serialize());
                     jQuery("#leftSearchResults").hide();
                     jQuery("#leftSearchResults").delay(800).html(html).fadeIn();
                     jQuery(document).ready(function () {

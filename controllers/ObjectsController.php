@@ -204,7 +204,20 @@
                     ."&search-idno=".htmlentities($vs_request_idno)
                     ."\">next results</a>";
 			} else {
-				$return .= "<a class=\"jscroll-next\"><!-- no more results to display, so no scrolling --></a>";
+				//$return .= "<a class=\"jscroll-next\"><!-- no more results to display, so no scrolling --></a>";
+                $return .= "<a class=\"jscroll-next\" href=\"".__CA_URL_ROOT__."/index.php/simpleEditor/Objects/DoSearch/?search-start=".($vs_end+1)
+                    ."&search-end=".($vs_end+$vs_num_results)
+                    ."&pos="
+                    ."&search-tous-champs=".htmlentities($vs_request_tous_champs)
+                    ."&search-localisation=".htmlentities($vs_request_localisation)
+                    ."&search-datation=".htmlentities($vs_request_datation)
+                    ."&search-materiau=".htmlentities($vs_request_materiau)
+                    ."&search-technique=".htmlentities($vs_request_technique)
+                    ."&search-titre=".htmlentities($vs_request_titre)
+                    ."&search-auteur=".htmlentities($vs_request_auteur)
+                    ."&search-domaine=".htmlentities($vs_request_domaine)
+                    ."&search-idno=".htmlentities($vs_request_idno)
+                    ."\">next results</a>";
 			}
 
 			$return .= "
